@@ -41,6 +41,7 @@ class Tile {
   // initialize to a random position
   public constructor() {
     this.nowPos = new Position();
+    // a prevPos at 0,0 indicates that it was just newly spawned
     this.prevPos = new Position(0,0);
     this.value = 2;
     this.mergedFrom = [];
@@ -103,4 +104,4 @@ class Grid {
   }
 }
 
-export { GRID_SIZE, Grid };
+export { GRID_SIZE, Position, Tile, Grid };
