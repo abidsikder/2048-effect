@@ -61,7 +61,7 @@ class Game {
       }
 
       // Leftwards
-      for (let xp = x - 1; x >= 1; xp--) {
+      for (let xp = x - 1; xp >= 1; xp--) {
         const cp = this.grid.getCell(xp,y);
         if (cp === null) continue;
         if (cp.value === v) {
@@ -72,7 +72,7 @@ class Game {
       }
 
       // Rightwards
-      for (let xp = x + 1; x <= GRID_SIZE; xp++) {
+      for (let xp = x + 1; xp <= GRID_SIZE; xp++) {
         const cp = this.grid.getCell(xp,y);
         if (cp === null) continue;
         if (cp.value === v) {
