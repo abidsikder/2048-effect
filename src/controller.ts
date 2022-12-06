@@ -145,9 +145,64 @@ class Game {
       }
     });
   }
-  // public moveRight() {
+  public moveRight() {
+    // merge all tiles
+    Grid.forEachRow(y => {
+      for (let x = GRID_SIZE-1; x >= 1; x--) {
+        // right neighbor
+        const rnbr = this.grid.getCell(x+1,y);
+        if (rnbr === null) continue;
 
-  // }
+        // cell we are actually inspecting
+        const c = this.grid.getCell(x,y);
+        if (c === null) continue;
+
+        // if we can't merge
+        if (c.value !== rnbr.value) continue;
+
+        // Create new tile
+        const newTile = new Tile();
+        newTile.nowPos.x = x+1;
+        newTile.nowPos.y = y;
+        newTile.value = c.value * 2;
+        newTile.setMergedFrom(rnbr, c);
+
+        // Remove the two current tiles under consideration from the grid
+        this.grid.emptyTheCell(x+1, y);
+        this.grid.emptyTheCell(x,y);
+
+        // Put new tile in the old right neighbors place
+        this.grid.setCell(x+1,y,newTile);
+      }
+    });
+
+    // move all tiles without merging
+    Grid.forEachRow(y => {
+      for (let x = GRID_SIZE; x >= 1; x--) {
+        const c = this.grid.getCell(x,y);
+
+        // if there is no empty space here so just move on
+        if (c !== null) continue;
+
+        // but if there is an empty space, then look for tiles to fill it up
+        for (let xp = x - 1; xp >= 1; xp--) {
+          const cp = this.grid.getCell(xp, y);
+          // if it's empty keep looking
+          if (cp === null) continue;
+
+          // otherwise move the tile
+          const t = cp;
+          this.grid.emptyTheCell(xp,y);
+          t.updatePos(new Position(x,y));
+          this.grid.setCell(x,y,t);
+
+          // we've already filled in so stop running this loop
+          break;
+        }
+      }
+    });
+  }
+
   // public moveDown() {
 
   // }
