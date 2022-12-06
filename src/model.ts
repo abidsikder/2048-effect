@@ -51,6 +51,11 @@ class Tile {
     this.prevPos = this.nowPos;
     this.nowPos = newPos;
   }
+
+  public setMergedFrom(t1: Tile, t2: Tile): void {
+    // this.mergedFrom = [].concat(t1, t2, t1.mergedFrom, t2.mergedFrom);
+    this.mergedFrom.push(t1, t2);
+  }
 }
 
 type Cell = Tile | null;
@@ -98,15 +103,15 @@ class Grid {
   setCell(x:number,y:number,c: Cell) {
     this.cells[x-1][y-1] = c;
   }
+  emptyTheCell(x:number,y:number): void {
+    this.cells[x-1][y-1] = null;
+  }
 
   public availablePositions(): Position[] {
-    const available = [];
-    for (let x = 1; x <= GRID_SIZE; x++) {
-      for (let y = 1; y <= GRID_SIZE; y++) {
-        if (this.getCell(x,y) === null)
-          available.push(new Position(x,y));
-      }
-    }
+    let available: Position[] = [];
+    Grid.forEachCell(this, (x,y,c) => {
+      if (c === null) available.push(new Position(x,y));
+    });
     return available;
   }
 
@@ -121,6 +126,26 @@ class Grid {
 
     return available[randInt(available.length-1)];
   }
+
+  public static forEachRow(fn: (y:number) => any): void {
+    for (let y = 1; y <= GRID_SIZE; y++) {
+      fn(y);
+    }
+  }
+
+  public static forEachColumn(fn: (x:number) => any): void {
+    for (let x = 1; x <= GRID_SIZE; x++) {
+      fn(x);
+    }
+  }
+
+  public static forEachCell(g: Grid, fn: (x:number,y:number,c:Cell) => any): void {
+    for (let x = 1; x <= GRID_SIZE; x++) {
+      for (let y = 1; y <= GRID_SIZE; y++) {
+        fn(x,y,g.getCell(x,y));
+      }
+    }
+  }
 }
 
-export { GRID_SIZE, Position, Tile, Grid };
+export { GRID_SIZE, Position, Tile, Cell, Grid };
