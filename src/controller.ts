@@ -114,7 +114,7 @@ class Game {
         this.grid.emptyTheCell(x-1, y);
         this.grid.emptyTheCell(x, y);
 
-        // Put new tile in the old left neighbors place
+        // Put new tile in the old neighbor's place
         this.grid.setCell(x-1, y, newTile);
       }
     });
@@ -171,7 +171,7 @@ class Game {
         this.grid.emptyTheCell(x+1, y);
         this.grid.emptyTheCell(x,y);
 
-        // Put new tile in the old right neighbors place
+        // Put new tile in the old right neighbor's place
         this.grid.setCell(x+1,y,newTile);
       }
     });
@@ -229,7 +229,7 @@ class Game {
         this.grid.emptyTheCell(x,y);
         this.grid.emptyTheCell(x,y-1);
 
-        // Put new tile in the old left neighbors place
+        // Put new tile in the old neighbor's place
         this.grid.setCell(x, y-1, newTile);
       }
     })
