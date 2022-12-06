@@ -65,6 +65,25 @@ class Grid {
               [null,null,null,null]];
   }
 
+  public toString(): string {
+    let str = "";
+    for (let y = GRID_SIZE; y >= 1; y--) {
+      for (let x = 1; x <= GRID_SIZE; x++) {
+        str += "[";
+        const c = this.getCell(x,y);
+        if (c === null) {
+          str += "    ";
+        }
+        else {
+          str += String(c.value).padStart(4," ");
+        }
+        str += "] "
+      }
+      str += "\n";
+    }
+    return str;
+  }
+
   /*
    * Think of the arrays are reaching backwards and up
    * cells =

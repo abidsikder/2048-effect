@@ -36,6 +36,10 @@ class Game {
   // public moveUp() {
 
   // }
+
+  public toString(): string {
+    return this.grid.toString();
+  }
 }
 
 export { Game };
