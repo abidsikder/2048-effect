@@ -121,7 +121,7 @@ class Game {
 
     // move tiles without merging
     Grid.forEachRow(y => {
-      for (let x = 1; x <= GRID_SIZE; x++) {
+      for (let x = 1; x <= GRID_SIZE-1; x++) {
         const c = this.grid.getCell(x,y);
 
         // if there is no empty space here so just move on
@@ -178,7 +178,7 @@ class Game {
 
     // move all tiles without merging
     Grid.forEachRow(y => {
-      for (let x = GRID_SIZE; x >= 1; x--) {
+      for (let x = GRID_SIZE; x >= 2; x--) {
         const c = this.grid.getCell(x,y);
 
         // if there is no empty space here so just move on
