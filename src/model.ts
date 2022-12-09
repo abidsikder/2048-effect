@@ -100,8 +100,10 @@ class Grid {
   getCell(x:number,y:number): Cell {
     return this.cells[x-1][y-1];
   }
-  setCell(x:number,y:number,c: Cell) {
-    this.cells[x-1][y-1] = c;
+  setTile(x:number,y:number,t: Tile): void {
+    t.nowPos.x = x;
+    t.nowPos.y = y;
+    this.cells[x-1][y-1] = t;
   }
   emptyTheCell(x:number,y:number): void {
     this.cells[x-1][y-1] = null;

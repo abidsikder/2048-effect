@@ -5,9 +5,11 @@ const PROBABILITY_SPAWN_2 = 0.7;
 
 class Game {
   public grid: Grid;
+  public score: number;
 
   constructor() {
     this.grid = new Grid();
+    this.score = 0;
   }
 
   // Spawns a new tile and returns the new Tile on success for spawning a tile, or a null if no tile was spawned
@@ -19,7 +21,7 @@ class Game {
     newTile.nowPos = randomPosition;
     newTile.value = Math.random() < PROBABILITY_SPAWN_2 ? 2 : 4;
 
-    this.grid.setCell(newTile.nowPos.x, newTile.nowPos.y, newTile);
+    this.grid.setTile(newTile.nowPos.x, newTile.nowPos.y, newTile);
 
     return newTile;
   }
@@ -88,34 +90,44 @@ class Game {
     return true;
   }
 
+  // Returns the new tile that was just generated
+  private mergeTwoTiles(t1: Tile, t2: Tile): Tile {
+    const newTile = new Tile();
+    newTile.value = t1.value + t2.value;
+    this.score += newTile.value;
+    newTile.setMergedFrom(t1, t2);
+    return newTile;
+  }
+
+
   public moveLeft() {
+
     // merge all tiles
     Grid.forEachRow(y => {
-      for (let x = 2; x <= GRID_SIZE; x++) {
-        // left neighbor
-        const lnbr = this.grid.getCell(x-1,y);
-        if (lnbr === null) continue;
-
+      for (let x = 1; x <= GRID_SIZE; x++) {
         // cell we are actually inspecting
         const c = this.grid.getCell(x,y);
         if (c === null) continue;
 
-        // if we can't merge
-        if (c.value !== lnbr.value) continue;
+        for (let xp = x + 1; xp <= GRID_SIZE; xp++) {
+          const cp = this.grid.getCell(xp,y);
+          if (cp === null) continue;
 
-        // Create new tile
-        const newTile = new Tile();
-        newTile.nowPos.x = x-1;
-        newTile.nowPos.y = y;
-        newTile.value = c.value * 2;
-        newTile.setMergedFrom(lnbr, c);
+          // check if it's indeed mergeable
+          if (c.value !== cp.value) continue;
 
-        // Remove the two current tiles under consideration from the grid
-        this.grid.emptyTheCell(x-1, y);
-        this.grid.emptyTheCell(x, y);
+          // Create new tile
+          const newTile = this.mergeTwoTiles(cp, c);
+          newTile.nowPos.x = x;
+          newTile.nowPos.y = y;
 
-        // Put new tile in the old neighbor's place
-        this.grid.setCell(x-1, y, newTile);
+          // Remove the two current tiles under consideration from the grid
+          this.grid.emptyTheCell(x,y);
+          this.grid.emptyTheCell(xp,y);
+
+          // Put new tile in the old neighbor's place
+          this.grid.setTile(x,y,newTile);
+        }
       }
     });
 
@@ -137,7 +149,7 @@ class Game {
           const t = cp;
           this.grid.emptyTheCell(xp,y);
           t.updatePos(new Position(x,y));
-          this.grid.setCell(x,y,t);
+          this.grid.setTile(x,y,t);
 
           // we've already filled in so stop running this loop
           break;
@@ -145,34 +157,34 @@ class Game {
       }
     });
   }
+
   public moveRight() {
     // merge all tiles
     Grid.forEachRow(y => {
-      for (let x = GRID_SIZE-1; x >= 1; x--) {
-        // right neighbor
-        const rnbr = this.grid.getCell(x+1,y);
-        if (rnbr === null) continue;
-
+      for (let x = GRID_SIZE; x >= 1; x--) {
         // cell we are actually inspecting
         const c = this.grid.getCell(x,y);
         if (c === null) continue;
 
-        // if we can't merge
-        if (c.value !== rnbr.value) continue;
+        for (let xp = x - 1; xp >= 1; xp--) {
+          const cp = this.grid.getCell(xp,y);
+          if (cp === null) continue;
 
-        // Create new tile
-        const newTile = new Tile();
-        newTile.nowPos.x = x+1;
-        newTile.nowPos.y = y;
-        newTile.value = c.value * 2;
-        newTile.setMergedFrom(rnbr, c);
+          // check if it's indeed mergeable
+          if (c.value !== cp.value) continue;
 
-        // Remove the two current tiles under consideration from the grid
-        this.grid.emptyTheCell(x+1, y);
-        this.grid.emptyTheCell(x,y);
+          // Create new tile
+          const newTile = this.mergeTwoTiles(cp, c);
+          newTile.nowPos.x = x;
+          newTile.nowPos.y = y;
 
-        // Put new tile in the old right neighbor's place
-        this.grid.setCell(x+1,y,newTile);
+          // Remove the two current tiles under consideration from the grid
+          this.grid.emptyTheCell(x,y);
+          this.grid.emptyTheCell(xp,y);
+
+          // Put new tile in the old neighbor's place
+          this.grid.setTile(x,y,newTile);
+        }
       }
     });
 
@@ -194,7 +206,7 @@ class Game {
           const t = cp;
           this.grid.emptyTheCell(xp,y);
           t.updatePos(new Position(x,y));
-          this.grid.setCell(x,y,t);
+          this.grid.setTile(x,y,t);
 
           // we've already filled in so stop running this loop
           break;
@@ -206,31 +218,30 @@ class Game {
   public moveDown() {
     // merge all tiles
     Grid.forEachColumn(x => {
-      for (let y = 2; y <= GRID_SIZE; y++) {
-        // down neighbor
-        const dnbr = this.grid.getCell(x,y-1);
-        if (dnbr === null) continue;
-
+      for (let y = 1; y <= GRID_SIZE; y++) {
         // cell we are actually inspecting
         const c = this.grid.getCell(x,y);
         if (c === null) continue;
 
-        // if we can't merge
-        if (c.value !== dnbr.value) continue;
+        for (let yp = y+1; yp <= GRID_SIZE; yp++) {
+          const cp = this.grid.getCell(x,yp);
+          if (cp === null) continue;
 
-        // Create new tile
-        const newTile = new Tile();
-        newTile.nowPos.x = x;
-        newTile.nowPos.y = y-1;
-        newTile.value = c.value * 2;
-        newTile.setMergedFrom(dnbr, c);
+          // Check if it's indeed mergeable
+          if (c.value !== cp.value) continue;
 
-        // Remove the two current tiles under consideration from the grid
-        this.grid.emptyTheCell(x,y);
-        this.grid.emptyTheCell(x,y-1);
+          // Create new tile
+          const newTile = this.mergeTwoTiles(cp, c);
+          newTile.nowPos.x = x;
+          newTile.nowPos.y = y;
 
-        // Put new tile in the old neighbor's place
-        this.grid.setCell(x, y-1, newTile);
+          // Remove the two current tiles under consideration from the grid
+          this.grid.emptyTheCell(x,y);
+          this.grid.emptyTheCell(x,yp);
+
+          // Put new tile in the old neighbor's place
+          this.grid.setTile(x,y,newTile);
+        }
       }
     })
 
@@ -252,7 +263,7 @@ class Game {
           const t = cp;
           this.grid.emptyTheCell(x,yp);
           t.updatePos(new Position(x,y));
-          this.grid.setCell(x,y,t);
+          this.grid.setTile(x,y,t);
 
           // we've already filled in so stop running this loop
           break;
@@ -264,31 +275,31 @@ class Game {
   public moveUp() {
     // merge all tiles
     Grid.forEachColumn(x => {
-      for (let y = GRID_SIZE-1; y >= 1; y--) {
-        // upwards neighbor
-        const unbr = this.grid.getCell(x, y+1);
-        if (unbr === null) continue;
-
+      for (let y = GRID_SIZE; y >= 1; y--) {
         // cell we are actually inspecting
         const c = this.grid.getCell(x,y);
         if (c === null) continue;
 
-        // if we can't merge
-        if (c.value !== unbr.value) continue;
+        // find a neighbor that could be merged
+        for (let yp = y-1; yp >= 1; yp--) {
+          const cp = this.grid.getCell(x,yp);
+          if (cp === null) continue;
 
-        // Create new tile
-        const newTile = new Tile();
-        newTile.nowPos.x = x;
-        newTile.nowPos.y = y+1;
-        newTile.value = c.value * 2;
-        newTile.setMergedFrom(unbr, c);
+          // check if it's indeed mergeable
+          if (c.value !== cp.value) continue;
 
-        // Remove the two current tiles under consideration from the grid
-        this.grid.emptyTheCell(x,y);
-        this.grid.emptyTheCell(x,y+1);
+          // Create new tile
+          const newTile = this.mergeTwoTiles(cp, c);
+          newTile.nowPos.x = x;
+          newTile.nowPos.y = y;
 
-        // Put new tile in the old neighbor's place
-        this.grid.setCell(x, y+1, newTile);
+          // Remove the two current tiles under consideration from the grid
+          this.grid.emptyTheCell(x,y);
+          this.grid.emptyTheCell(x,yp);
+
+          // Put new tile in the old neighbor's place
+          this.grid.setTile(x,y,newTile);
+        }
       }
     });
 
@@ -310,7 +321,7 @@ class Game {
           const t = cp;
           this.grid.emptyTheCell(x,yp);
           t.updatePos(new Position(x,y));
-          this.grid.setCell(x,y,t);
+          this.grid.setTile(x,y,t);
 
           // we've already filled in so stop running this loop
           break;
@@ -320,7 +331,7 @@ class Game {
   }
 
   public toString(): string {
-    return this.grid.toString();
+    return `Score: ${this.score}\n` + this.grid.toString();
   }
 }
 
