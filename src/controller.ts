@@ -6,10 +6,12 @@ const PROBABILITY_SPAWN_2 = 0.7;
 class Game {
   public grid: Grid;
   public score: number;
+  public won: boolean;
 
   constructor() {
     this.grid = new Grid();
     this.score = 0;
+    this.won = false;
   }
 
   // Spawns a new tile and returns the new Tile on success for spawning a tile, or a null if no tile was spawned
@@ -96,11 +98,13 @@ class Game {
     newTile.value = t1.value + t2.value;
     this.score += newTile.value;
     newTile.setMergedFrom(t1, t2);
+    if (newTile.value === 2048) this.won = true;
     return newTile;
   }
 
+  /* All movement functions return true if at least one tile was moved. */
 
-  public moveLeft() {
+  public moveLeft(): boolean {
 
     // merge all tiles
     Grid.forEachRow(y => {
@@ -132,6 +136,7 @@ class Game {
     });
 
     // move tiles without merging
+    let moved = false;
     Grid.forEachRow(y => {
       for (let x = 1; x <= GRID_SIZE-1; x++) {
         const c = this.grid.getCell(x,y);
@@ -146,6 +151,7 @@ class Game {
           if (cp === null) continue;
 
           // otherwise move the tile
+          moved = true;
           const t = cp;
           this.grid.emptyTheCell(xp,y);
           t.updatePos(new Position(x,y));
@@ -156,9 +162,12 @@ class Game {
         }
       }
     });
+
+    return moved;
   }
 
-  public moveRight() {
+  public moveRight(): boolean {
+
     // merge all tiles
     Grid.forEachRow(y => {
       for (let x = GRID_SIZE; x >= 1; x--) {
@@ -189,6 +198,7 @@ class Game {
     });
 
     // move all tiles without merging
+    let moved = false;
     Grid.forEachRow(y => {
       for (let x = GRID_SIZE; x >= 2; x--) {
         const c = this.grid.getCell(x,y);
@@ -203,6 +213,7 @@ class Game {
           if (cp === null) continue;
 
           // otherwise move the tile
+          moved = true;
           const t = cp;
           this.grid.emptyTheCell(xp,y);
           t.updatePos(new Position(x,y));
@@ -213,9 +224,12 @@ class Game {
         }
       }
     });
+
+    return moved;
   }
 
-  public moveDown() {
+  public moveDown(): boolean {
+
     // merge all tiles
     Grid.forEachColumn(x => {
       for (let y = 1; y <= GRID_SIZE; y++) {
@@ -243,9 +257,10 @@ class Game {
           this.grid.setTile(x,y,newTile);
         }
       }
-    })
+    });
 
     // move all tiles without merging
+    let moved = false;
     Grid.forEachColumn(x => {
       for (let y = 1; y <= GRID_SIZE-1; y++) {
         const c = this.grid.getCell(x,y);
@@ -260,6 +275,7 @@ class Game {
           if (cp === null) continue;
 
           // otherwise move the tile
+          moved = true;
           const t = cp;
           this.grid.emptyTheCell(x,yp);
           t.updatePos(new Position(x,y));
@@ -270,9 +286,12 @@ class Game {
         }
       }
     });
+
+    return moved;
   }
 
-  public moveUp() {
+  public moveUp(): boolean {
+
     // merge all tiles
     Grid.forEachColumn(x => {
       for (let y = GRID_SIZE; y >= 1; y--) {
@@ -304,6 +323,7 @@ class Game {
     });
 
     // move all tiles without merging
+    let moved = false;
     Grid.forEachColumn(x => {
       for (let y = GRID_SIZE; y >= 2; y--) {
         const c = this.grid.getCell(x,y);
@@ -318,6 +338,7 @@ class Game {
           if (cp === null) continue;
 
           // otherwise move the tile
+          moved = true;
           const t = cp;
           this.grid.emptyTheCell(x,yp);
           t.updatePos(new Position(x,y));
@@ -328,6 +349,8 @@ class Game {
         }
       }
     });
+
+    return moved;
   }
 
   public toString(): string {

@@ -50,6 +50,17 @@ loader.load('droid_sans_bold.typeface.json', function ( font ) {
   scene.add(textMesh);
 } );
 
+let g = new Game();
+// g.spawn();
+// g.spawn();
+
+const t1 = new Tile();
+t1.value = 1024;
+const t2 = new Tile();
+t2.value = 1024;
+g.grid.setTile(4,4,t1);
+g.grid.setTile(3,4,t2);
+
 function animate() {
   requestAnimationFrame(animate);
 
@@ -60,37 +71,34 @@ function animate() {
 }
 animate();
 
-const a = new Game();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
-a.spawn();
+console.log(g)
+console.log(g.toString());
 
-// const t1 = new Tile();
-// t1.value = 4;
-// const t2 = new Tile();
-// t2.value = 4;
-// const t3 = new Tile();
-// t3.value = 4;
-// const t4 = new Tile();
-// t4.value = 2;
-// a.grid.setCell(1,4,t1);
-// a.grid.setCell(2,4,t2);
-// a.grid.setCell(3,4,t3);
-// a.grid.setCell(4,4,t4);
-
-console.log(a.toString())
-a.moveLeft()
-console.log(a.toString())
+window.addEventListener("keydown", (event) => {
+  const scoreBefore = g.score;
+  let moved = false;
+  if ("ArrowUp" === event.key) {
+    moved = g.moveUp();
+  }
+  else if ("ArrowLeft" === event.key) {
+    moved = g.moveLeft();
+  }
+  else if ("ArrowDown" === event.key) {
+    moved = g.moveDown();
+  }
+  else if ("ArrowRight" === event.key) {
+    moved = g.moveRight();
+  }
+  const scored = scoreBefore - g !== 0;
+  if (moved || scored) {
+    g.spawn();
+    // order of won and isGameOver important, can get 2048 with an unmovable board
+    if (g.won) {
+      alert("You won!");
+    }
+    else if (g.isGameOver()) {
+      alert("Game over");
+    }
+    console.log(g.toString());
+  }
+})
