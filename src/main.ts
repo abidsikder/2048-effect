@@ -3,6 +3,8 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { Game } from './controller'
 import { Tile } from './model'
+import { generateBoxTile } from './view'
+
 
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 
@@ -28,19 +30,19 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(width, height)
 
-const geometry = new THREE.BoxGeometry(1,1,1);
-const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-const cube = new THREE.Mesh(geometry, material);
 
-scene.add(cube)
+const boxTile2 = generateBoxTile(2);
+console.log(boxTile2);
+scene.add(boxTile2);
+
 camera.position.z = 10;
 
 // @ts-ignore Controls is not used but does not need to be since initializing the object sets up the orbit controls for us
 const controls = new OrbitControls(camera, renderer.domElement)
 
 const loader = new FontLoader();
-loader.load('droid_sans_bold.typeface.json', function ( font ) {
-	const textGeo = new TextGeometry( 'Hello three.js!', {
+loader.load('fonts/Inconsolata_Regular.json', function ( font ) {
+	const textGeo = new TextGeometry( '2 4 8 16 32 64', {
 		font: font,
 		size: 3,
 		height: 0.0001
@@ -64,8 +66,8 @@ g.grid.setTile(3,4,t2);
 function animate() {
   requestAnimationFrame(animate);
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  // cube.rotation.x += 0.01;
+  // cube.rotation.y += 0.01;
 
   renderer.render(scene, camera);
 }
@@ -74,6 +76,7 @@ animate();
 console.log(g)
 console.log(g.toString());
 
+// Game steps
 window.addEventListener("keydown", (event) => {
   const scoreBefore = g.score;
   let moved = false;
