@@ -106,6 +106,8 @@ window.addEventListener("keydown", (event) => {
   }
 })
 
+// adding background sound
+
 const listener = new THREE.AudioListener();
 camera.add(listener);
 const audioLoader = new THREE.AudioLoader();
@@ -116,4 +118,12 @@ audioLoader.load("./sound/forest.mp3", function(buffer) {
   backgroundSound.setLoop(true);
   backgroundSound.setVolume(0.5);
   backgroundSound.play();
+});
+
+// One-liner to resume playback when user interacted with the page. This is needed to 
+// ensure that the audio plays in Chrome. Pressing any key starts background sound. 
+document.querySelector('button').addEventListener('click', function() {
+  context.resume().then(() => {
+    console.log('Playback resumed successfully');
+  });
 });
