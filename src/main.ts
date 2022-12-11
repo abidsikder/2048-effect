@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { Game } from './controller'
 import { Tile } from './model'
-import { generateBoxTile } from './view'
+import { generateBoxTileBorder } from './view'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -37,8 +37,6 @@ const TextFontShapes = {
   "SemiBold": await FontPromises["SemiBold"],
   "SemiExpanded": await FontPromises["SemiExpanded"],
 }
-console.log(TextFontShapes)
-console.log("resolved")
 
 // function getShaderFile(textFile: string) {
 //   var request = new XMLHttpRequest();
@@ -111,9 +109,8 @@ composer.addPass(fxaaPass);
 composer.addPass(copyPass);
 
 const boxTileTile = new Tile();
-boxTileTile.value = 2048;
-const boxTile2 = generateBoxTile(boxTileTile);
-console.log(boxTile2);
+boxTileTile.value = 32;
+const boxTile2 = generateBoxTileBorder(boxTileTile);
 scene.add(boxTile2);
 
 camera.position.z = 4;
@@ -141,9 +138,6 @@ function animate() {
   composer.render();
 }
 animate();
-
-console.log(g)
-console.log(g.toString());
 
 // Game steps
 window.addEventListener("keydown", (event) => {
