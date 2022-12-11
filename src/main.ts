@@ -7,6 +7,9 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 
 const width = window.innerWidth
 const height = window.innerHeight
@@ -34,6 +37,8 @@ const TextFontShapes = {
   "SemiBold": await FontPromises["SemiBold"],
   "SemiExpanded": await FontPromises["SemiExpanded"],
 }
+console.log(TextFontShapes)
+console.log("resolved")
 
 // function getShaderFile(textFile: string) {
 //   var request = new XMLHttpRequest();
@@ -56,9 +61,9 @@ const TextFontShapes = {
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(50,width/height,0.1,2000)
 const renderer = new THREE.WebGLRenderer({
-	canvas: document.getElementById('app') as HTMLCanvasElement
+	canvas: document.getElementById('app') as HTMLCanvasElement,
 })
-renderer.setSize(width, height)
+renderer.setSize(width, height);
 
 // adding background sound
 // const listener = new THREE.AudioListener();
@@ -85,7 +90,6 @@ renderer.setSize(width, height)
 // bloom 
 const renderScene = new RenderPass(scene, camera);
 const composer = new EffectComposer(renderer);
-composer.addPass(renderScene);
 
 const bloomPass = new UnrealBloomPass(
   // vec2 representing resolution of the scene 
@@ -93,12 +97,18 @@ const bloomPass = new UnrealBloomPass(
   // intensity of effect
   0.8,
   // radius of bloom
-
   0.1,
   // pixels that exhibit bloom (found through trial and error)
   0.01
 );
+
+const fxaaPass = new ShaderPass( FXAAShader );
+const copyPass = new ShaderPass( CopyShader );
+
+composer.addPass(renderScene);
 composer.addPass(bloomPass);
+composer.addPass(fxaaPass);
+composer.addPass(copyPass);
 
 const boxTileTile = new Tile();
 boxTileTile.value = 2048;
