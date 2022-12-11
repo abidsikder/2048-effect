@@ -4,6 +4,9 @@ import { Tile } from './model'
 import { generateBoxTile } from './view'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 const width = window.innerWidth
 const height = window.innerHeight
@@ -44,11 +47,11 @@ const TextFontShapes = {
 
 // One-liner to resume playback when user interacted with the page. This is needed to 
 // ensure that the audio plays in Chrome. Pressing any key starts background sound. 
-document.querySelector('button').addEventListener('click', function() {
-  context.resume().then(() => {
-    console.log('Playback resumed successfully');
-  });
-});
+// document.querySelector('button').addEventListener('click', function() {
+//   context.resume().then(() => {
+//     console.log('Playback resumed successfully');
+//   });
+// });
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(50,width/height,0.1,2000)
@@ -70,6 +73,23 @@ audioLoader.load("./sound/forest.mp3", function(buffer) {
   backgroundSound.setVolume(0.5);
   backgroundSound.play();
 });
+
+// bloom 
+const renderScene = new RenderPass(scene, camera);
+const composer = new EffectComposer(renderer);
+composer.addPass(renderScene);
+
+const bloomPass = new UnrealBloomPass(
+  // vec2 representing resolution of the scene 
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  // intensity of effect
+  0.8,
+  // radius of bloom
+  0.1,
+  // pixels that exhibit bloom (found through trial and error)
+  0.01
+);
+composer.addPass(bloomPass);
 
 const boxTileTile = new Tile();
 boxTileTile.value = 2;
@@ -99,7 +119,7 @@ function animate() {
   // cube.rotation.x += 0.01;
   // cube.rotation.y += 0.01;
 
-  renderer.render(scene, camera);
+  composer.render();
 }
 animate();
 
@@ -137,3 +157,5 @@ window.addEventListener("keydown", (event) => {
 })
 
 export { TextFontShapes }
+
+
