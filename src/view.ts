@@ -1,30 +1,7 @@
 import * as THREE from 'three'
-import { Font, FontLoader } from 'three/examples/jsm/loaders/FontLoader'
+import { TextFontShapes } from './main';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { Tile } from './model'
-
-const fontLoader = new FontLoader();
-interface TextFontShapesT {
-  "Regular": Font | null,
-  "SemiBold": Font | null,
-  "SemiExpanded": Font | null,
-}
-const TextFontShapes: TextFontShapesT = {
-  "Regular": null,
-  "SemiBold": null,
-  "SemiExpanded": null,
-}
-fontLoader.load("./fonts/Inconsolata_Regular.json", f => {
-  TextFontShapes["Regular"] = f;
-});
-fontLoader.load("./fonts/Inconsolata_SemiBold.json", f => {
-  TextFontShapes["SemiBold"] = f;
-});
-fontLoader.load("./fonts/Inconsolata_SemiExpanded_ExtraBold.json", f => {
-  TextFontShapes["SemiExpanded"] = f;
-});
-
-console.log(TextFontShapes)
 
 // n is the number
 function generateBoxTile(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1): THREE.Mesh {
@@ -52,6 +29,7 @@ function generateBoxTile(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, L
     boxTile.add(botMesh);
 
     // TODO add text inside of the box tile
+    console.log(TextFontShapes);
 
     return boxTile;
 }
@@ -82,4 +60,4 @@ const colors = {
     gameOverGlow: 0x050505
 };
 
-export { generateBoxTile };
+export { generateBoxTile, TextFontShapesLoaded };

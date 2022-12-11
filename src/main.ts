@@ -1,16 +1,36 @@
 import * as THREE from 'three'
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { Game } from './controller'
 import { Tile } from './model'
 import { generateBoxTile } from './view'
-
-
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 
 const width = window.innerWidth
 const height = window.innerHeight
 
+const fontLoader = new FontLoader();
+const FontPromises = {
+  "Regular" : new Promise(resolve => {
+    fontLoader.load("./fonts/Inconsolata_Regular.json", f => {
+      resolve(f);
+    });
+  }),
+  "SemiBold" : new Promise(resolve => {
+    fontLoader.load("./fonts/Inconsolata_SemiBold.json", f => {
+      resolve(f);
+    });
+  }),
+  "SemiExpanded" : new Promise(resolve => {
+    fontLoader.load("./fonts/Inconsolata_SemiExpanded_ExtraBold.json", f => {
+      resolve(f);
+    });
+  })
+}
+const TextFontShapes = {
+  "Regular": await FontPromises["Regular"],
+  "SemiBold": await FontPromises["SemiBold"],
+  "SemiExpanded": await FontPromises["SemiExpanded"],
+}
 
 // function getShaderFile(textFile: string) {
 //   var request = new XMLHttpRequest();
@@ -30,27 +50,16 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(width, height)
 
-
-const boxTile2 = generateBoxTile(2);
+const boxTileTile = new Tile();
+boxTileTile.value = 2;
+const boxTile2 = generateBoxTile(boxTileTile);
 console.log(boxTile2);
 scene.add(boxTile2);
 
-camera.position.z = 10;
+camera.position.z = 4;
 
 // @ts-ignore Controls is not used but does not need to be since initializing the object sets up the orbit controls for us
 const controls = new OrbitControls(camera, renderer.domElement)
-
-const loader = new FontLoader();
-loader.load('fonts/Inconsolata_Regular.json', function ( font ) {
-	const textGeo = new TextGeometry( '2 4 8 16 32 64', {
-		font: font,
-		size: 3,
-		height: 0.0001
-	} );
-  const textMat = new THREE.MeshBasicMaterial({color:0xff0000});
-  const textMesh = new THREE.Mesh(textGeo, textMat);
-  scene.add(textMesh);
-} );
 
 let g = new Game();
 // g.spawn();
@@ -105,3 +114,5 @@ window.addEventListener("keydown", (event) => {
     console.log(g.toString());
   }
 })
+
+export { TextFontShapes }
