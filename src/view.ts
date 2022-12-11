@@ -1,30 +1,49 @@
 import * as THREE from 'three'
+import { Font, FontLoader } from 'three/examples/jsm/loaders/FontLoader'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+import { Tile } from './model'
+
+const fontLoader = new FontLoader();
+interface TextFontShapesT {
+  "Regular": Font | null,
+  "SemiBold": Font | null,
+  "SemiExpanded": Font | null,
+}
+const TextFontShapes: TextFontShapesT = {
+  "Regular": null,
+  "SemiBold": null,
+  "SemiExpanded": null,
+}
+fontLoader.load("./fonts/Inconsolata_Regular.json", f => {
+  TextFontShapes["Regular"] = f;
+});
+fontLoader.load("./fonts/Inconsolata_SemiBold.json", f => {
+  TextFontShapes["SemiBold"] = f;
+});
+fontLoader.load("./fonts/Inconsolata_SemiExpanded_ExtraBold.json", f => {
+  TextFontShapes["SemiExpanded"] = f;
+});
+
+console.log(TextFontShapes)
 
 // n is the number
-function generateBoxTile(n:number): THREE.Mesh {
+function generateBoxTile(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1): THREE.Mesh {
     // @ts-ignore typescript being annoying about object access with array notation
-    const color = colors[n];
-
-    const THICKNESS = 0.04;
-    const DEPTH = 0.3;
-
-    const mat = new THREE.MeshBasicMaterial({
-        color
-    });
-    const sideGeo = new THREE.BoxGeometry(THICKNESS, 1, DEPTH);
-    const topBotGeo = new THREE.BoxGeometry(1 - 2*THICKNESS, THICKNESS, DEPTH);
+    const color = colors[t.value];
+    const mat = new THREE.MeshBasicMaterial({color});
+    const sideGeo = new THREE.BoxGeometry(THICKNESS, LENGTH, DEPTH);
+    const topBotGeo = new THREE.BoxGeometry(LENGTH - 2*THICKNESS, THICKNESS, DEPTH);
 
     const leftMesh = new THREE.Mesh(sideGeo, mat);
-    leftMesh.position.multiplyScalar(0);
     const rightMesh = new THREE.Mesh(sideGeo, mat);
-    rightMesh.position.x += 1 - 2*THICKNESS;
     const topMesh = new THREE.Mesh(topBotGeo, mat);
-    topMesh.position.multiplyScalar(0);
-    topMesh.position.x += 0.5 - THICKNESS;
-    topMesh.position.y += (1 - THICKNESS)/2;
     const botMesh = new THREE.Mesh(topBotGeo, mat);
-    botMesh.position.x += 0.5 - THICKNESS;
-    botMesh.position.y -= (1 - THICKNESS)/2;
+
+    rightMesh.position.x += LENGTH - THICKNESS;
+    topMesh.position.x += LENGTH/2 - THICKNESS/2;
+    topMesh.position.y += LENGTH/2 - THICKNESS/2;
+    botMesh.position.x += LENGTH/2 - THICKNESS/2;
+    botMesh.position.y -= LENGTH/2 - THICKNESS/2;
 
     const boxTile = new THREE.Group();
     boxTile.add(leftMesh);
@@ -32,7 +51,7 @@ function generateBoxTile(n:number): THREE.Mesh {
     boxTile.add(topMesh);
     boxTile.add(botMesh);
 
-    // TODO add text
+    // TODO add text inside of the box tile
 
     return boxTile;
 }
