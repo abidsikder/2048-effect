@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { TextFontShapes } from './main';
+import { Font } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { Tile } from './model'
 
@@ -22,14 +23,21 @@ function generateBoxTile(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, L
     botMesh.position.x += LENGTH/2 - THICKNESS/2;
     botMesh.position.y -= LENGTH/2 - THICKNESS/2;
 
+    // TODO add text inside of the box tile
+    const textGeo = new TextGeometry("2", {
+      font: TextFontShapes["SemiBold"] as Font,
+      size: 1,
+      height: THICKNESS,
+    });
+    const textMesh = new THREE.Mesh(textGeo, mat);
+    textMesh.position.multiplyScalar(0);
+
     const boxTile = new THREE.Group();
     boxTile.add(leftMesh);
     boxTile.add(rightMesh);
     boxTile.add(topMesh);
     boxTile.add(botMesh);
-
-    // TODO add text inside of the box tile
-    console.log(TextFontShapes);
+    boxTile.add(textMesh);
 
     return boxTile;
 }
