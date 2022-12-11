@@ -24,13 +24,22 @@ function generateBoxTile(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, L
     botMesh.position.y -= LENGTH/2 - THICKNESS/2;
 
     // TODO add text inside of the box tile
-    const textGeo = new TextGeometry("2", {
+    // const textStr = String(t.value);
+    // const textGeo = [];
+    // for (let i = 0; i <= textStr.length; i++) {
+    // t
+    // }
+
+    const textGeo = new TextGeometry(String(t.value), {
       font: TextFontShapes["SemiBold"] as Font,
-      size: 1,
-      height: THICKNESS,
+      size: LENGTH/1.14,
+      height: DEPTH,
     });
+    console.log(textGeo);
     const textMesh = new THREE.Mesh(textGeo, mat);
-    textMesh.position.multiplyScalar(0);
+    textMesh.position.x += LENGTH/6
+    textMesh.position.y -= LENGTH * 0.4;
+    textMesh.position.z -= DEPTH/2;
 
     const boxTile = new THREE.Group();
     boxTile.add(leftMesh);
@@ -38,6 +47,10 @@ function generateBoxTile(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, L
     boxTile.add(topMesh);
     boxTile.add(botMesh);
     boxTile.add(textMesh);
+
+    // const bbox = new THREE.Box3();
+    // bbox.setFromObject(boxTile);
+    // bbox.getCenter(textMesh.position);
 
     return boxTile;
 }
@@ -68,4 +81,4 @@ const colors = {
     gameOverGlow: 0x050505
 };
 
-export { generateBoxTile, TextFontShapesLoaded };
+export { generateBoxTile };

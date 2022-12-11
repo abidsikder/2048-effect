@@ -55,24 +55,32 @@ const TextFontShapes = {
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(50,width/height,0.1,2000)
-// const camera = new THREE.OrthographicCamera();
 const renderer = new THREE.WebGLRenderer({
 	canvas: document.getElementById('app') as HTMLCanvasElement
 })
 renderer.setSize(width, height)
 
 // adding background sound
-const listener = new THREE.AudioListener();
-camera.add(listener);
-const audioLoader = new THREE.AudioLoader();
-const backgroundSound = new THREE.Audio(listener);
+// const listener = new THREE.AudioListener();
+// camera.add(listener);
+// const audioLoader = new THREE.AudioLoader();
+// const backgroundSound = new THREE.Audio(listener);
 
-audioLoader.load("./sound/forest.mp3", function(buffer) {
-  backgroundSound.setBuffer(buffer);
-  backgroundSound.setLoop(true);
-  backgroundSound.setVolume(0.5);
-  backgroundSound.play();
-});
+// // TODO wrap in proper promise
+// audioLoader.load("./sound/forest.mp3", function(buffer) {
+//   backgroundSound.setBuffer(buffer);
+//   backgroundSound.setLoop(true);
+//   backgroundSound.setVolume(0.5);
+//   backgroundSound.play();
+// });
+
+// // One-liner to resume playback when user interacted with the page. This is needed to 
+// // ensure that the audio plays in Chrome. Pressing any key starts background sound. 
+// document.getElementsByTagName('button')[0].addEventListener('click', function() {
+//   context.resume().then(() => {
+//     console.log('Playback resumed successfully');
+//   });
+// });
 
 // bloom 
 const renderScene = new RenderPass(scene, camera);
@@ -85,6 +93,7 @@ const bloomPass = new UnrealBloomPass(
   // intensity of effect
   0.8,
   // radius of bloom
+
   0.1,
   // pixels that exhibit bloom (found through trial and error)
   0.01
@@ -92,7 +101,7 @@ const bloomPass = new UnrealBloomPass(
 composer.addPass(bloomPass);
 
 const boxTileTile = new Tile();
-boxTileTile.value = 2;
+boxTileTile.value = 2048;
 const boxTile2 = generateBoxTile(boxTileTile);
 console.log(boxTile2);
 scene.add(boxTile2);
