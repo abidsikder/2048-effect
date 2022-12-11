@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import $ from 'jquery'
 import { Game } from './controller'
 import { Tile } from './model'
 import { generateBoxTileBorder } from './view'
@@ -38,15 +39,20 @@ const TextFontShapes = {
   "SemiExpanded": await FontPromises["SemiExpanded"],
 }
 
-// function getShaderFile(textFile: string) {
-//   var request = new XMLHttpRequest();
-//   request.open("GET", textFile, false);
-//   request.overrideMimeType("text/plain");
-//   request.send(null);
-//   return request.responseText;
-// };
-// const vertexSrc = getShaderFile("./frag.glsl")
-// const fragSrc = getShaderFile("./vertex.glsl")
+let fragSrc = "";
+let vertSrc = "";
+await $.ajax({
+  url: "./glsl/fragment.glsl",
+  dataType: "text",
+  success: (result: any) => fragSrc = result,
+  error: (err: any) => console.log(err),
+});
+await $.ajax({
+  url: "./glsl/vertex.glsl",
+  dataType: "text",
+  success: (result: any) => vertSrc = result,
+  error: (err: any) => console.log(err),
+})
 
 // One-liner to resume playback when user interacted with the page. This is needed to 
 // ensure that the audio plays in Chrome. Pressing any key starts background sound. 
