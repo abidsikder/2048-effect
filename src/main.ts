@@ -105,3 +105,15 @@ window.addEventListener("keydown", (event) => {
     console.log(g.toString());
   }
 })
+
+const listener = new THREE.AudioListener();
+camera.add(listener);
+const audioLoader = new THREE.AudioLoader();
+const backgroundSound = new THREE.Audio(listener);
+
+audioLoader.load("./sound/forest.mp3", function(buffer) {
+  backgroundSound.setBuffer(buffer);
+  backgroundSound.setLoop(true);
+  backgroundSound.setVolume(0.5);
+  backgroundSound.play();
+});
