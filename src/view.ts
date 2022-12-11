@@ -75,8 +75,87 @@ function generateBoxTileBorder(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 
   boxTile.add(topMesh);
   boxTile.add(botMesh);
 
+  // @ts-ignore fauly error message, type mismatch but it still works
   return boxTile;
 }
+
+function generate2(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1) {
+    const textGeo = new TextGeometry("2", {
+      font: TextFontShapes["SemiBold"] as Font,
+      size: LENGTH/1.14,
+      height: DEPTH,
+    });
+    const color = colors[2];
+    const mat = new THREE.MeshBasicMaterial({color});
+    const textMesh = new THREE.Mesh(textGeo, mat);
+
+    textMesh.position.x += LENGTH * 0.15;
+    textMesh.position.y -= LENGTH * 0.4;
+    textMesh.position.z -= DEPTH/2;
+
+    return textMesh;
+}
+
+function generate4(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1) {
+  const textGeo = new TextGeometry("4", {
+    font: TextFontShapes["SemiBold"] as Font,
+    size: LENGTH/1.14,
+    height: DEPTH,
+  });
+  const color = colors[4];
+  const mat = new THREE.MeshBasicMaterial({color});
+  const textMesh = new THREE.Mesh(textGeo, mat);
+
+  textMesh.position.x += LENGTH * 0.12;
+  textMesh.position.y -= LENGTH * 0.38;
+  textMesh.position.z -= DEPTH/2;
+
+  return textMesh;
+}
+
+function generate8(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1) {
+  const textGeo = new TextGeometry("8", {
+    font: TextFontShapes["SemiBold"] as Font,
+    size: LENGTH/1.14,
+    height: DEPTH,
+  });
+  const color = colors[8];
+  const mat = new THREE.MeshBasicMaterial({color});
+  const textMesh = new THREE.Mesh(textGeo, mat);
+
+  textMesh.position.x += LENGTH * 0.16;
+  textMesh.position.y -= LENGTH * 0.38;
+  textMesh.position.z -= DEPTH/2;
+
+  return textMesh;
+}
+
+// function generate16(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1) {
+//   const textGeo1 = new TextGeometry("1", {
+//     font: TextFontShapes["SemiBold"] as Font,
+//     size: LENGTH/1.14,
+//     height: DEPTH,
+//   });
+
+//   const textGeo6 = new TextGeometry("6", {
+//     font: TextFontShapes["SemiBold"] as Font,
+//     size: LENGTH/1.14,
+//     height: DEPTH,
+//   });
+//   const color = colors[8];
+//   const mat = new THREE.MeshBasicMaterial({color});
+//   const group = new THREE.Group();
+//   const textMesh = new THREE.Mesh(textGeo1, mat);
+//   const textMesh = new THREE.Mesh(textGeo6, mat);
+
+//   textMesh.position.x += LENGTH * 0.16;
+//   textMesh.position.y -= LENGTH * 0.38;
+//   textMesh.position.z -= DEPTH/2;
+
+//   return textMesh;
+// }
+
+
 
     // TODO add text inside of the box tile
     // const textStr = String(t.value);
@@ -116,4 +195,4 @@ function generateBoxTileBorder(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 
 // }
 
 
-export { generateBoxTileBorder };
+export { generateBoxTileBorder, generate2, generate4, generate8};

@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { Game } from './controller'
 import { Tile } from './model'
-import { generateBoxTileBorder } from './view'
+import { generateBoxTileBorder, generate2, generate4, generate8} from './view'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -112,6 +112,9 @@ const boxTileTile = new Tile();
 boxTileTile.value = 32;
 const boxTile2 = generateBoxTileBorder(boxTileTile);
 scene.add(boxTile2);
+
+const textMesh = generate8(boxTileTile);
+scene.add(textMesh);
 
 camera.position.z = 4;
 
