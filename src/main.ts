@@ -81,7 +81,7 @@ composer.addPass(renderScene);
 
 const bloomPass = new UnrealBloomPass(
   // vec2 representing resolution of the scene 
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  new THREE.Vector2(width, height),
   // intensity of effect
   0.8,
   // radius of bloom
