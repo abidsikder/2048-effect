@@ -42,6 +42,14 @@ const TextFontShapes = {
 // const vertexSrc = getShaderFile("./frag.glsl")
 // const fragSrc = getShaderFile("./vertex.glsl")
 
+// One-liner to resume playback when user interacted with the page. This is needed to 
+// ensure that the audio plays in Chrome. Pressing any key starts background sound. 
+document.querySelector('button').addEventListener('click', function() {
+  context.resume().then(() => {
+    console.log('Playback resumed successfully');
+  });
+});
+
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(50,width/height,0.1,2000)
 // const camera = new THREE.OrthographicCamera();
@@ -49,6 +57,19 @@ const renderer = new THREE.WebGLRenderer({
 	canvas: document.getElementById('app') as HTMLCanvasElement
 })
 renderer.setSize(width, height)
+
+// adding background sound
+const listener = new THREE.AudioListener();
+camera.add(listener);
+const audioLoader = new THREE.AudioLoader();
+const backgroundSound = new THREE.Audio(listener);
+
+audioLoader.load("./sound/forest.mp3", function(buffer) {
+  backgroundSound.setBuffer(buffer);
+  backgroundSound.setLoop(true);
+  backgroundSound.setVolume(0.5);
+  backgroundSound.play();
+});
 
 const boxTileTile = new Tile();
 boxTileTile.value = 2;
