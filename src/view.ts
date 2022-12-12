@@ -3,6 +3,7 @@ import { Tile } from './model'
 import { TextFontShapes } from './fonts';
 import { Font } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+import { Group } from 'three';
 
 // hex colors in strings for all elements in the game
 const colors = {
@@ -538,10 +539,76 @@ function generate2048(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100,
   return group;
 }
 
+function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+  const textGeo1 = new TextGeometry("2048", {
+    font: TextFontShapes["SemiBold"] as Font,
+    size: LENGTH/1.5,
+    height: DEPTH/100,
+  });
+
+  const textGeo2 = new TextGeometry("Effect", {
+    font: TextFontShapes["SemiBold"] as Font,
+    size: LENGTH/1.5,
+    height: DEPTH/100,
+  });
+
+  const color = new THREE.Color( 1, 0, 0 )
+  const mat = new THREE.MeshBasicMaterial({color});
+  const textMesh1 = new THREE.Mesh(textGeo1, mat);
+  const textMesh2 = new THREE.Mesh(textGeo2, mat);
+
+  textMesh1.position.x += LENGTH * 0.05;
+  textMesh1.position.y += LENGTH * 0.7 ;
+  textMesh1.position.z -= DEPTH/200;
+
+  textMesh2.position.x += LENGTH * 0.05;
+  textMesh2.position.y -= LENGTH *0.12;
+  textMesh2.position.z -= DEPTH/200;
+
+  const group = new THREE.Group();
+  group.add(textMesh1);
+  group.add(textMesh2);
+
+  return group;
+}
+
+function generateScore(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+  const textGeo1 = new TextGeometry("Score", {
+    font: TextFontShapes["SemiBold"] as Font,
+    size: LENGTH/2.5,
+    height: DEPTH/100,
+  });
+
+  const textGeo2 = new TextGeometry("100000", {
+    font: TextFontShapes["SemiBold"] as Font,
+    size: LENGTH/2.5,
+    height: DEPTH/100,
+  });
+
+  const color = new THREE.Color( 1, 0, 0 )
+  const mat = new THREE.MeshBasicMaterial({color});
+  const textMesh1 = new THREE.Mesh(textGeo1, mat);
+  const textMesh2 = new THREE.Mesh(textGeo2, mat);
+
+  textMesh1.position.x += LENGTH * 0.05;
+  textMesh1.position.y += LENGTH * 0.7 ;
+  textMesh1.position.z -= DEPTH/200;
+
+  textMesh2.position.x += LENGTH * 0.05;
+  textMesh2.position.y -= LENGTH *0.12;
+  textMesh2.position.z -= DEPTH/200;
+
+  const group = new THREE.Group();
+  group.add(textMesh1);
+  group.add(textMesh2);
+
+  return group;
+}
+
 export { 
   generateBoxTileBorder, 
   generate2, generate4, generate8, generate16, 
   generate32, generate64, 
   generate128, generate256, generate512, 
-  generate1024, generate2048 
+  generate1024, generate2048, generateTitle, generateScore
 };

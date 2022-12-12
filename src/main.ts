@@ -12,7 +12,7 @@ import { Tile } from './model'
 import { generateBoxTileBorder, generate2, generate4, generate8, generate16, 
   generate32, generate64, 
   generate128, generate256, generate512, 
-  generate1024, generate2048} from './view'
+  generate1024, generate2048, generateTitle, generateScore} from './view'
 import { fragSrc, vertSrc } from './shaders'
 
 class Effect2048 {
@@ -161,6 +161,14 @@ scene.add(textMesh2048);
 textMesh2048.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
 textMesh2048.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
 
+
+// function printFormatted(p: THREE.Vector3): void {
+//   console.log(`new THREE.Vector3(${p.x}, ${p.y}, ${p.z})`)
+// }
+
+// console.log("2 position")
+// printFormatted(textMesh2.position)
+
 // pos1x: textMesh.position.x -= boardLen/2 - offset;
 // pos1y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
 // pos2x: textMesh.position.x -= boardLen/2 - tileLen - (2 * offset);
@@ -171,6 +179,19 @@ textMesh2048.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
 // pos4y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
 // pos13x: textMesh.position.x -= boardLen/2 - offset
 // pos13y: textMesh.position.x -= boardLen/2 - tileLen/2 - offset
+
+// add title: 2048 Effect
+const title = generateTitle();
+scene.add(title);
+title.position.multiplyScalar(0);
+title.position.x -= boardLen/2;
+title.position.y += boardLen/2 + tileLen/2;
+
+// add score
+const score = generateScore();
+scene.add(score);
+title.position.x += boardLen;
+title.position.y += tileLen/2;
 
 effect2048.animate();
 
