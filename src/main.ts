@@ -12,7 +12,7 @@ import { Tile } from './model'
 import { generateBoxTileBorder, generate2, generate4, generate8, generate16, 
   generate32, generate64, 
   generate128, generate256, generate512, 
-  generate1024, generate2048, generateTitle, generateScore} from './view'
+  generate1024, generate2048, generateTitle, generateScore, generateMessage} from './view'
 import { fragSrc, vertSrc } from './shaders'
 
 class Effect2048 {
@@ -72,7 +72,7 @@ class Effect2048 {
 const effect2048 = new Effect2048();
 
 // @ts-ignore Controls is not used but does not need to be since initializing the object sets up the orbit controls for us
-const orbitControls = new OrbitControls(effect2048.camera, effect2048.renderer.domElement)
+const orbitControls = new OrbitControls(effect2048.camera, effect2048.renderer.dom Element)
 
 const shaderGeo = new THREE.BoxGeometry(1,1,1);
 const shaderMat = new THREE.ShaderMaterial({
@@ -82,8 +82,10 @@ const shaderMat = new THREE.ShaderMaterial({
 const shaderMesh = new THREE.Mesh(shaderGeo,shaderMat);
 effect2048.scene.add(shaderMesh);
 
+
 // TODO: !!! temp remove immediately after merge
 const scene = effect2048.scene;
+scene.background = new THREE.Color(0.1, 0.1, 0.1);
 
 const boardTile = new Tile();
 // TODO: add option for board border generation with proper color
@@ -185,13 +187,21 @@ const title = generateTitle();
 scene.add(title);
 title.position.multiplyScalar(0);
 title.position.x -= boardLen/2;
-title.position.y += boardLen/2 + tileLen/2;
+title.position.y += boardLen/2.1 + tileLen/2;
 
 // add score
 const score = generateScore();
 scene.add(score);
-title.position.x += boardLen;
-title.position.y += tileLen/2;
+score.position.x += boardLen/3.7;
+score.position.y += boardLen/2.1;
+
+effect2048.animate();
+
+// add message
+const message = generateMessage();
+scene.add(message);
+message.position.x -= boardLen/2 - tileLen;
+message.position.y -= boardLen/1.4;
 
 effect2048.animate();
 

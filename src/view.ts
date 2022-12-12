@@ -542,13 +542,13 @@ function generate2048(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100,
 function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
   const textGeo1 = new TextGeometry("2048", {
     font: TextFontShapes["SemiBold"] as Font,
-    size: LENGTH/1.5,
+    size: LENGTH/1.8,
     height: DEPTH/100,
   });
 
   const textGeo2 = new TextGeometry("Effect", {
     font: TextFontShapes["SemiBold"] as Font,
-    size: LENGTH/1.5,
+    size: LENGTH/1.8,
     height: DEPTH/100,
   });
 
@@ -575,13 +575,13 @@ function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH
 function generateScore(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
   const textGeo1 = new TextGeometry("Score", {
     font: TextFontShapes["SemiBold"] as Font,
-    size: LENGTH/2.5,
+    size: LENGTH/3,
     height: DEPTH/100,
   });
 
-  const textGeo2 = new TextGeometry("100000", {
+  const textGeo2 = new TextGeometry("10000", {
     font: TextFontShapes["SemiBold"] as Font,
-    size: LENGTH/2.5,
+    size: LENGTH/3,
     height: DEPTH/100,
   });
 
@@ -590,12 +590,12 @@ function generateScore(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH
   const textMesh1 = new THREE.Mesh(textGeo1, mat);
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
 
-  textMesh1.position.x += LENGTH * 0.05;
-  textMesh1.position.y += LENGTH * 0.7 ;
+  textMesh1.position.x += LENGTH * 0.007;
+  textMesh1.position.y += LENGTH * 0.75;
   textMesh1.position.z -= DEPTH/200;
 
-  textMesh2.position.x += LENGTH * 0.05;
-  textMesh2.position.y -= LENGTH *0.12;
+  textMesh2.position.x += LENGTH * 0.007;
+  textMesh2.position.y += LENGTH *0.35;
   textMesh2.position.z -= DEPTH/200;
 
   const group = new THREE.Group();
@@ -605,10 +605,29 @@ function generateScore(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH
   return group;
 }
 
+function generateMessage(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+  const textGeo1 = new TextGeometry("Press 'n' key to start a new game ", {
+    font: TextFontShapes["SemiBold"] as Font,
+    size: LENGTH/7,
+    height: DEPTH/100,
+  });
+
+  const color = new THREE.Color( 1, 0, 0 )
+  const mat = new THREE.MeshBasicMaterial({color});
+  const textMesh1 = new THREE.Mesh(textGeo1, mat);
+
+  textMesh1.position.x -= LENGTH * 0.1;
+  textMesh1.position.y += LENGTH * 0.7 ;
+  textMesh1.position.z -= DEPTH/200;
+
+  return textMesh1;
+}
+
 export { 
   generateBoxTileBorder, 
   generate2, generate4, generate8, generate16, 
   generate32, generate64, 
   generate128, generate256, generate512, 
-  generate1024, generate2048, generateTitle, generateScore
+  generate1024, generate2048, generateTitle, generateScore,
+  generateMessage
 };
