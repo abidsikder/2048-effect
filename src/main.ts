@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import { Game } from './controller'
 import { Tile } from './model'
-import { generateBoxTileBorder, generate2, generate4, generate8} from './view'
+import { generateBoxTileBorder, generate2, generate4, generate8, generate16, 
+  generate32, generate64, generate128, generate256, generate512, generate1024, generate2048} 
+  from './view'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -108,13 +110,10 @@ composer.addPass(bloomPass);
 composer.addPass(fxaaPass);
 composer.addPass(copyPass);
 
-const boxTileTile = new Tile();
-boxTileTile.value = 32;
-const boxTile2 = generateBoxTileBorder(boxTileTile);
-scene.add(boxTile2);
-
-const textMesh = generate8(boxTileTile);
+const tile = new Tile();
+const textMesh = generate2048(tile);
 scene.add(textMesh);
+textMesh.position.x -= 0.5;
 
 camera.position.z = 4;
 
