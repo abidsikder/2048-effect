@@ -72,7 +72,7 @@ class Effect2048 {
 const effect2048 = new Effect2048();
 
 // @ts-ignore Controls is not used but does not need to be since initializing the object sets up the orbit controls for us
-const orbitControls = new OrbitControls(effect2048.camera, effect2048.renderer.dom Element)
+const orbitControls = new OrbitControls(effect2048.camera, effect2048.renderer.domElement)
 
 const shaderGeo = new THREE.BoxGeometry(1,1,1);
 const shaderMat = new THREE.ShaderMaterial({
@@ -85,7 +85,7 @@ effect2048.scene.add(shaderMesh);
 
 // TODO: !!! temp remove immediately after merge
 const scene = effect2048.scene;
-scene.background = new THREE.Color(0.1, 0.1, 0.1);
+scene.background = new THREE.Color(0., 0.1, 0.1);
 
 const boardTile = new Tile();
 // TODO: add option for board border generation with proper color
