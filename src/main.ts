@@ -1,8 +1,4 @@
 import * as THREE from 'three'
-import { Game } from './controller'
-import { Tile } from './model'
-import { generateBoxTileBorder } from './view'
-import { fragSrc, vertSrc } from './shaders'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 // import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -10,6 +6,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
 // import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
 // import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+
+import { Game } from './controller'
+import { Tile } from './model'
+import { generateBoxTileBorder, generate2048 } from './view'
+import { fragSrc, vertSrc } from './shaders'
 
 class Effect2048 {
   scene: THREE.Scene;
@@ -65,10 +66,6 @@ class Effect2048 {
 // composer.addPass(fxaaPass);
 // composer.addPass(copyPass);
 
-
-// g.spawn();
-// g.spawn();
-
 const effect2048 = new Effect2048();
 
 // @ts-ignore Controls is not used but does not need to be since initializing the object sets up the orbit controls for us
@@ -80,6 +77,11 @@ const t2 = new Tile();
 t2.value = 1024;
 effect2048.g.grid.setTile(4,4,t1);
 effect2048.g.grid.setTile(3,4,t2);
+
+const tile = new Tile();
+const textMesh = generate2048(tile);
+effect2048.scene.add(textMesh);
+textMesh.position.x -= 0.5;
 
 const shaderGeo = new THREE.BoxGeometry(1,1,1);
 const shaderMat = new THREE.ShaderMaterial({
