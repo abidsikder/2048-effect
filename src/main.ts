@@ -52,7 +52,13 @@ await $.ajax({
   dataType: "text",
   success: (result: any) => vertSrc = result,
   error: (err: any) => console.log(err),
-})
+});
+const shaderMat = new THREE.ShaderMaterial({
+  fragmentShader: fragSrc,
+  vertexShader: vertSrc,
+});
+const shaderGeo = new THREE.BoxGeometry(1,1,1);
+const shaderMesh = new THREE.Mesh(shaderGeo,shaderMat);
 
 // One-liner to resume playback when user interacted with the page. This is needed to 
 // ensure that the audio plays in Chrome. Pressing any key starts background sound. 
@@ -68,6 +74,8 @@ const renderer = new THREE.WebGLRenderer({
 	canvas: document.getElementById('app') as HTMLCanvasElement,
 })
 renderer.setSize(width, height);
+
+scene.add(shaderMesh);
 
 // adding background sound
 // const listener = new THREE.AudioListener();
@@ -118,6 +126,7 @@ const boxTileTile = new Tile();
 boxTileTile.value = 32;
 const boxTile2 = generateBoxTileBorder(boxTileTile);
 scene.add(boxTile2);
+boxTile2.position.x -= 0.5;
 
 camera.position.z = 4;
 
