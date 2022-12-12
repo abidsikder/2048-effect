@@ -9,7 +9,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import { Game } from './controller'
 import { Tile } from './model'
-import { generateBoxTileBorder, generate2048 } from './view'
+import { generateBoxTileBorder, generate2, generate4, generate8, generate16, 
+  generate32, generate64, 
+  generate128, generate256, generate512, 
+  generate1024, generate2048} from './view'
 import { fragSrc, vertSrc } from './shaders'
 
 class Effect2048 {
@@ -71,18 +74,6 @@ const effect2048 = new Effect2048();
 // @ts-ignore Controls is not used but does not need to be since initializing the object sets up the orbit controls for us
 const orbitControls = new OrbitControls(effect2048.camera, effect2048.renderer.domElement)
 
-const t1 = new Tile();
-t1.value = 1024;
-const t2 = new Tile();
-t2.value = 1024;
-effect2048.g.grid.setTile(4,4,t1);
-effect2048.g.grid.setTile(3,4,t2);
-
-const tile = new Tile();
-const textMesh = generate2048(tile);
-effect2048.scene.add(textMesh);
-textMesh.position.x -= 0.5;
-
 const shaderGeo = new THREE.BoxGeometry(1,1,1);
 const shaderMat = new THREE.ShaderMaterial({
   fragmentShader: fragSrc,
@@ -91,11 +82,95 @@ const shaderMat = new THREE.ShaderMaterial({
 const shaderMesh = new THREE.Mesh(shaderGeo,shaderMat);
 effect2048.scene.add(shaderMesh);
 
-const boxTileTile = new Tile();
-boxTileTile.value = 32;
-const boxTile2 = generateBoxTileBorder(boxTileTile);
-effect2048.scene.add(boxTile2);
-boxTile2.position.x += 0.5;
+// TODO: !!! temp remove immediately after merge
+const scene = effect2048.scene;
+
+const boardTile = new Tile();
+// TODO: add option for board border generation with proper color
+//boardTile.value = colors.boardBorder;
+const boardLen = 5;
+const offset = 0.2;
+const board = generateBoxTileBorder(boardTile, 0.04, 0.3,  boardLen);
+scene.add(board);
+board.position.x -= boardLen/2;
+
+const tile2 = new Tile();
+const tileLen = 1;
+const textMesh2 = generate2(tile2);
+scene.add(textMesh2);
+textMesh2.position.x -= boardLen/2 - offset;
+textMesh2.position.y += boardLen/2 - tileLen/2 - offset;
+
+const tile4 = new Tile();
+const textMesh4 = generate4(tile4);
+scene.add(textMesh4);
+textMesh4.position.x -= boardLen/2 - tileLen - (2 * offset);
+textMesh4.position.y += boardLen/2 - tileLen/2 - offset;
+
+const tile8 = new Tile();
+const textMesh8 = generate8(tile8);
+scene.add(textMesh8);
+textMesh8.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
+textMesh8.position.y += boardLen/2 - tileLen/2 - offset;
+
+const tile16 = new Tile();
+const textMesh16 = generate16(tile16);
+scene.add(textMesh16);
+textMesh16.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
+textMesh16.position.y += boardLen/2 - tileLen/2 - offset;
+
+const tile32 = new Tile();
+const textMesh32 = generate32(tile32);
+scene.add(textMesh32);
+textMesh32.position.x -= boardLen/2 - offset;
+textMesh32.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
+
+const tile64 = new Tile();
+const textMesh64 = generate64(tile64);
+scene.add(textMesh64);
+textMesh64.position.x -= boardLen/2 - tileLen - (2 * offset);
+textMesh64.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
+
+const tile128 = new Tile();
+const textMesh128 = generate128(tile128);
+scene.add(textMesh128);
+textMesh128.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
+textMesh128.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
+
+const tile256 = new Tile();
+const textMesh256 = generate256(tile256);
+scene.add(textMesh256);
+textMesh256.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
+textMesh256.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
+
+const tile512 = new Tile();
+const textMesh512 = generate512(tile512);
+scene.add(textMesh512);
+textMesh512.position.x -= boardLen/2 - offset;
+textMesh512.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
+
+const tile1024 = new Tile();
+const textMesh1024 = generate1024(tile1024);
+scene.add(textMesh1024);
+textMesh1024.position.x -= boardLen/2 - tileLen - (2 * offset);
+textMesh1024.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
+
+const tile2048 = new Tile();
+const textMesh2048 = generate2048(tile2048);
+scene.add(textMesh2048);
+textMesh2048.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
+textMesh2048.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
+
+// pos1x: textMesh.position.x -= boardLen/2 - offset;
+// pos1y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
+// pos2x: textMesh.position.x -= boardLen/2 - tileLen - (2 * offset);
+// pos2y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
+// pos3x: textMesh.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
+// pos3y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
+// pos4x: textMesh.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
+// pos4y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
+// pos13x: textMesh.position.x -= boardLen/2 - offset
+// pos13y: textMesh.position.x -= boardLen/2 - tileLen/2 - offset
 
 effect2048.animate();
 
