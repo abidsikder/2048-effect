@@ -1,7 +1,4 @@
 import * as THREE from 'three'
-import { TextFontShapes } from './main';
-import { Font } from 'three/examples/jsm/loaders/FontLoader'
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { Tile } from './model'
 
 // hex colors in strings for all elements in the game
@@ -30,27 +27,6 @@ const colors = {
   gameOverGlow: 0x050505
 };
 
-// font sizes from the design spec
-const textSizes = {
-  2: 85,
-  4: 85,
-  8: 85,
-  16: 85,
-  32: 85,
-  64: 85,
-  128: 75,
-  256: 75,
-  512: 75,
-  1024: 60,
-  2048: 60,
-  titleText: 110,
-  scoreLabel: 40,
-  scoreNumber: 40,
-  newGameText: 40,
-  winText: 110,
-  gameOverText: 80,
-};
-
 function generateBoxTileBorder(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1): THREE.Mesh {
   // @ts-ignore typescript being annoying about object access with array notation
   const color = colors[t.value];
@@ -75,45 +51,8 @@ function generateBoxTileBorder(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 
   boxTile.add(topMesh);
   boxTile.add(botMesh);
 
+  // @ts-ignore weird error
   return boxTile;
 }
-
-    // TODO add text inside of the box tile
-    // const textStr = String(t.value);
-    // const textMeshes = new THREE.Group();
-    // for (let i = 0; i < textStr.length; i++) {
-    //   const digit = textStr[i];
-    //   const textGeo = new TextGeometry(digit, {
-    //     font: TextFontShapes["Regular"] as Font,
-    //     size: LENGTH/1.14,
-    //     height: DEPTH,
-    //   });
-    //   const textMesh = new THREE.Mesh(textGeo, mat);
-      // textMesh.position.add(computeBoxTileTextShift(t,THICKNESS,DEPTH,LENGTH));
-      // textMesh.position.x += LENGTH* 0.8 * scale;
-      // textMesh.position.y -= LENGTH * 0.4 * scale;
-      // textMesh.position.z -= DEPTH/2;
-
-      // const scale = 1/textStr.length * 1.2;
-      // textMesh.position.x += i * LENGTH/1.14 * 0.6 * scale;
-
-      // textMeshes.add(textMesh);
-
-
-// function computeBoxTileTextShift(t:Tile, THICKNESS:number, DEPTH:number, LENGTH:number): THREE.Vector3 {
-//   const shift = new THREE.Vector3();
-//   shift.z = DEPTH;
-//   switch(t.value) {
-//     case 2: {
-//       shift.x += 3;
-//       break;
-//     }
-//     default:
-
-//   }
-
-//   return shift;
-// }
-
 
 export { generateBoxTileBorder };
