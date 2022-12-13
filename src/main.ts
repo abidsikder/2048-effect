@@ -3,14 +3,77 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+
+import { createNoise2D, NoiseFunction2D, createNoise4D, NoiseFunction4D } from 'simplex-noise'
 
 import { Game } from './controller'
 import { colors, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
 import { GRID_SIZE, Position, Tile, Cell, Grid } from './model'
 import { fragSrc, vertSrc } from './shaders'
+
+class Particles {
+  NUM_PARTICLES = 1000;
+
+  positions: THREE.Vector3[] = [];
+  velocities: THREE.Vector3[] = [];
+  // @ts-ignore
+  psGeo: THREE.BufferGeometry;
+  // @ts-ignore
+  psMesh: THREE.Points;
+  
+  xNoise: NoiseFunction4D;
+  yNoise: NoiseFunction4D;
+  zNoise: NoiseFunction4D;
+  hueNoise: NoiseFunction2D;
+
+  constructor() {
+    this.xNoise = createNoise4D();
+    this.yNoise = createNoise4D();
+    this.zNoise = createNoise4D();
+    this.hueNoise = createNoise2D();
+
+    for (let i = 0; i < this.NUM_PARTICLES; i++) {
+      this.positions[i] = new THREE.Vector3(
+        THREE.MathUtils.randFloatSpread( 7 ),
+        THREE.MathUtils.randFloatSpread( 7 ),
+        THREE.MathUtils.randFloatSpread( 7 )
+      );
+      this.velocities[i] = new THREE.Vector3(
+        THREE.MathUtils.randFloatSpread( 3 ),
+        THREE.MathUtils.randFloatSpread( 3 ),
+        THREE.MathUtils.randFloatSpread( 3 )
+      );
+    }
+
+    this.updateMesh(0);
+  }
+
+  updateMesh(time: number) {
+    this.psGeo = new THREE.BufferGeometry();
+    this.psGeo.setFromPoints(this.positions);
+    const color = new THREE.Color(`hsl(${Math.abs(this.hueNoise(this.NUM_PARTICLES, time))*360}, 100%,50%)`);
+    const psMat = new THREE.PointsMaterial({color});
+    psMat.size = 0.1;
+    this.psMesh = new THREE.Points(this.psGeo, psMat);
+  }
+
+  update(time: number, timeStep: number) {
+    for (let i = 0; i < this.NUM_PARTICLES; i++) {
+      const p = this.positions[i];
+      const v = this.velocities[i];
+      const aX = this.xNoise(p.x, p.y, p.z, time);
+      const aY = this.yNoise(p.x, p.y, p.z, time);
+      const aZ = this.zNoise(p.x, p.y, p.z, time);
+
+      v.x += aX*timeStep;
+      v.y += aY*timeStep;
+      v.z += aZ*timeStep;
+      p.addScaledVector(v, timeStep);
+    }
+
+    this.updateMesh(time/100);
+  }
+}
 
 class Effect2048 {
   scene: THREE.Scene;
@@ -18,12 +81,16 @@ class Effect2048 {
   renderer: THREE.WebGLRenderer;
   g: Game;
 
-  ps: THREE.Points;
+  ps: Particles;
+
+  time: number;
+  TIME_STEP = 0.05;
 
   effectComposer: EffectComposer;
 
   constructor() {
     this.g = new Game();
+    this.time = 0;
 
     /* Basic Scene Stuff */
     const width = window.innerWidth
@@ -52,33 +119,15 @@ class Effect2048 {
       0.01
     );
 
-    const fxaaPass = new ShaderPass( FXAAShader );
-    const copyPass = new ShaderPass( CopyShader );
     effectComposer.addPass(renderScene);
     effectComposer.addPass(bloomPass);
-    effectComposer.addPass(fxaaPass);
-    effectComposer.addPass(copyPass);
 
     this.effectComposer = effectComposer;
 
     /* Particles */
-    const vertices = [];
-    const NUM_PARTICLES = 100;
-    for (let i = 0; i < NUM_PARTICLES; i++) {
-      const x = THREE.MathUtils.randFloatSpread( 7 );
-      const y = THREE.MathUtils.randFloatSpread( 7 );
-      const z = THREE.MathUtils.randFloatSpread( 7 );
 
-      vertices.push( x, y, z );
-    }
-    const psGeo = new THREE.BufferGeometry();
-    psGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    const psMat = new THREE.PointsMaterial({color: 0x888888});
-    psMat.size = 0.1;
-    this.ps = new THREE.Points(psGeo, psMat);
-
-    this.scene.add(this.ps);
-
+    this.ps = new Particles();
+    this.scene.add(this.ps.psMesh);
 
     // removes "this is undefined" error from animate() function
     this.animate = this.animate.bind(this)
@@ -86,6 +135,13 @@ class Effect2048 {
 
   public animate() {
     requestAnimationFrame(this.animate);
+
+    // console.log(this.noise4D(0,0,0,this.time));
+    this.time += this.TIME_STEP;
+
+    this.scene.remove(this.ps.psMesh);
+    this.ps.update(this.time, this.TIME_STEP);
+    this.scene.add(this.ps.psMesh)
 
     this.effectComposer.render();
     // this.renderer.render(this.scene, this.camera);
