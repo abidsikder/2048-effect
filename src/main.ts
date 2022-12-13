@@ -24,7 +24,7 @@ class Effect2048 {
 
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(50,width/height,0.1,2000)
-    this.camera.position.z = 4;
+    this.camera.position.z = 10;
     this.renderer = new THREE.WebGLRenderer({
       canvas: document.getElementById('app') as HTMLCanvasElement,
     })
