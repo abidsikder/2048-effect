@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-// import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-// import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-// import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
-// import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
-// import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 
 import { Game } from './controller'
 import { colors, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
@@ -18,7 +18,14 @@ class Effect2048 {
   renderer: THREE.WebGLRenderer;
   g: Game;
 
+  ps: THREE.Points;
+
+  effectComposer: EffectComposer;
+
   constructor() {
+    this.g = new Game();
+
+    /* Basic Scene Stuff */
     const width = window.innerWidth
     const height = window.innerHeight
 
@@ -30,7 +37,48 @@ class Effect2048 {
     })
     this.renderer.setSize(width, height);
 
-    this.g = new Game();
+    /* Unreal Bloom Pass */ 
+    const renderScene = new RenderPass(this.scene, this.camera);
+    const effectComposer = new EffectComposer(this.renderer);
+
+    const bloomPass = new UnrealBloomPass(
+      // vec2 representing resolution of the scene 
+      new THREE.Vector2(width, height),
+      // intensity of effect
+      0.4,
+      // radius of bloom
+      0.04,
+      // pixels that exhibit bloom (found through trial and error)
+      0.01
+    );
+
+    const fxaaPass = new ShaderPass( FXAAShader );
+    const copyPass = new ShaderPass( CopyShader );
+    effectComposer.addPass(renderScene);
+    effectComposer.addPass(bloomPass);
+    effectComposer.addPass(fxaaPass);
+    effectComposer.addPass(copyPass);
+
+    this.effectComposer = effectComposer;
+
+    /* Particles */
+    const vertices = [];
+    const NUM_PARTICLES = 100;
+    for (let i = 0; i < NUM_PARTICLES; i++) {
+      const x = THREE.MathUtils.randFloatSpread( 7 );
+      const y = THREE.MathUtils.randFloatSpread( 7 );
+      const z = THREE.MathUtils.randFloatSpread( 7 );
+
+      vertices.push( x, y, z );
+    }
+    const psGeo = new THREE.BufferGeometry();
+    psGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    const psMat = new THREE.PointsMaterial({color: 0x888888});
+    psMat.size = 0.1;
+    this.ps = new THREE.Points(psGeo, psMat);
+
+    this.scene.add(this.ps);
+
 
     // removes "this is undefined" error from animate() function
     this.animate = this.animate.bind(this)
@@ -39,32 +87,12 @@ class Effect2048 {
   public animate() {
     requestAnimationFrame(this.animate);
 
-    // composer.render();
-    this.renderer.render(this.scene, this.camera);
+    this.effectComposer.render();
+    // this.renderer.render(this.scene, this.camera);
   }
 }
 
 // bloom 
-// const renderScene = new RenderPass(scene, camera);
-// const composer = new EffectComposer(renderer);
-
-// const bloomPass = new UnrealBloomPass(
-//   // vec2 representing resolution of the scene 
-//   new THREE.Vector2(width, height),
-//   // intensity of effect
-//   0.8,
-//   // radius of bloom
-//   0.1,
-//   // pixels that exhibit bloom (found through trial and error)
-//   0.01
-// );
-
-// const fxaaPass = new ShaderPass( FXAAShader );
-// const copyPass = new ShaderPass( CopyShader );
-// composer.addPass(renderScene);
-// composer.addPass(bloomPass);
-// composer.addPass(fxaaPass);
-// composer.addPass(copyPass);
 
 const effect2048 = new Effect2048();
 
