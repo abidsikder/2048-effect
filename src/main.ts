@@ -143,18 +143,18 @@ class Effect2048 {
   public animate() {
     requestAnimationFrame(this.animate);
 
-    // const allObjects = new Array();
-    // Grid.forEachCell(this.g.grid, (x, y, c) => {
-    //   if (c !== null) {
-    //     const tileToAdd = generateNumberText(c);
-    //     this.scene.add(tileToAdd);
-    //     const pos = (4 * (y - 1)) + x;
-    //     tileToAdd.position.x = tileCoord[pos].x;
-    //     tileToAdd.position.y = tileCoord[pos].y;
-    //     tileToAdd.position.z = tileCoord[pos].z;
-    //     allObjects.push(tileToAdd);
-    //   }
-    // });
+    const allObjects = new Array();
+    Grid.forEachCell(this.g.grid, (x, y, c) => {
+      if (c === null) return;
+
+      const tile = c;
+      const tileMesh = generateNumberText(tile);
+      this.scene.add(tileMesh);
+
+      const tileScenePos = tileCoord[tile.nowPos.x][tile.nowPos.y];
+      tileMesh.position.copy(tileScenePos);
+      allObjects.push(tileMesh);
+    });
 
     const score = generateScore(this.g.score);
     this.scene.add(score);
@@ -163,15 +163,15 @@ class Effect2048 {
 
     this.time += this.TIME_STEP;
 
-    // this.scene.remove(this.ps.psMesh);
-    // this.ps.update(this.time, this.TIME_STEP);
-    // this.scene.add(this.ps.psMesh)
+    this.scene.remove(this.ps.psMesh);
+    this.ps.update(this.time, this.TIME_STEP);
+    this.scene.add(this.ps.psMesh)
 
     this.effectComposer.render();
 
-    // for (let i = 0; i < allObjects.length; i++) {
-    //   this.scene.remove(allObjects[i]); 
-    // }
+    for (let i = 0; i < allObjects.length; i++) {
+      this.scene.remove(allObjects[i]); 
+    }
 
     this.scene.remove(score);
   }
