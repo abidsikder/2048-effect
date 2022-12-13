@@ -1,16 +1,79 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-// import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-// import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-// import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
-// import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
-// import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+import { createNoise2D, NoiseFunction2D, createNoise4D, NoiseFunction4D } from 'simplex-noise'
 
 import { Game } from './controller'
 import { colors, tileCoord, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
 import { GRID_SIZE, Position, Tile, Grid } from './model'
 import { fragSrc, vertSrc } from './shaders'
+
+class Particles {
+  NUM_PARTICLES = 500;
+
+  positions: THREE.Vector3[] = [];
+  velocities: THREE.Vector3[] = [];
+  // @ts-ignore
+  psGeo: THREE.BufferGeometry;
+  // @ts-ignore
+  psMesh: THREE.Points;
+  
+  xNoise: NoiseFunction4D;
+  yNoise: NoiseFunction4D;
+  zNoise: NoiseFunction4D;
+  hueNoise: NoiseFunction2D;
+
+  constructor() {
+    this.xNoise = createNoise4D();
+    this.yNoise = createNoise4D();
+    this.zNoise = createNoise4D();
+    this.hueNoise = createNoise2D();
+
+    for (let i = 0; i < this.NUM_PARTICLES; i++) {
+      this.positions[i] = new THREE.Vector3(
+        THREE.MathUtils.randFloatSpread( 7 ),
+        THREE.MathUtils.randFloatSpread( 7 ),
+        THREE.MathUtils.randFloatSpread( 7 )
+      );
+      this.velocities[i] = new THREE.Vector3(
+        THREE.MathUtils.randFloatSpread( 3 ),
+        THREE.MathUtils.randFloatSpread( 3 ),
+        THREE.MathUtils.randFloatSpread( 3 )
+      );
+    }
+
+    this.updateMesh(0);
+  }
+
+  updateMesh(time: number) {
+    this.psGeo = new THREE.BufferGeometry();
+    this.psGeo.setFromPoints(this.positions);
+    const color = new THREE.Color(`hsl(${Math.abs(this.hueNoise(this.NUM_PARTICLES, time))*360}, 100%,50%)`);
+    const psMat = new THREE.PointsMaterial({color});
+    psMat.size = 0.1;
+    this.psMesh = new THREE.Points(this.psGeo, psMat);
+  }
+
+  update(time: number, timeStep: number) {
+    for (let i = 0; i < this.NUM_PARTICLES; i++) {
+      const p = this.positions[i];
+      const v = this.velocities[i];
+      const aX = this.xNoise(p.x, p.y, p.z, time);
+      const aY = this.yNoise(p.x, p.y, p.z, time);
+      const aZ = this.zNoise(p.x, p.y, p.z, time);
+
+      v.x += aX*timeStep;
+      v.y += aY*timeStep;
+      v.z += aZ*timeStep;
+      p.addScaledVector(v, timeStep);
+    }
+
+    this.updateMesh(time/100);
+  }
+}
 
 class Effect2048 {
   scene: THREE.Scene;
@@ -18,19 +81,53 @@ class Effect2048 {
   renderer: THREE.WebGLRenderer;
   g: Game;
 
+  ps: Particles;
+
+  time: number;
+  TIME_STEP = 0.05;
+
+  effectComposer: EffectComposer;
+
   constructor() {
+    this.g = new Game();
+    this.time = 0;
+
+    /* Basic Scene Stuff */
     const width = window.innerWidth
     const height = window.innerHeight
 
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(50,width/height,0.1,2000)
-    this.camera.position.z = 4;
+    this.camera.position.z = 10;
     this.renderer = new THREE.WebGLRenderer({
       canvas: document.getElementById('app') as HTMLCanvasElement,
     })
     this.renderer.setSize(width, height);
 
-    this.g = new Game();
+    /* Unreal Bloom Pass */ 
+    const renderScene = new RenderPass(this.scene, this.camera);
+    const effectComposer = new EffectComposer(this.renderer);
+
+    const bloomPass = new UnrealBloomPass(
+      // vec2 representing resolution of the scene 
+      new THREE.Vector2(width, height),
+      // intensity of effect
+      0.4,
+      // radius of bloom
+      0.04,
+      // pixels that exhibit bloom (found through trial and error)
+      0.01
+    );
+
+    effectComposer.addPass(renderScene);
+    effectComposer.addPass(bloomPass);
+
+    this.effectComposer = effectComposer;
+
+    /* Particles */
+
+    this.ps = new Particles();
+    this.scene.add(this.ps.psMesh);
 
     // removes "this is undefined" error from animate() function
     this.animate = this.animate.bind(this)
@@ -43,7 +140,7 @@ class Effect2048 {
     Grid.forEachCell(this.g.grid, (x, y, c) => {
       if (c !== null) {
         const tileToAdd = generateNumberText(c);
-        this.scene.add(generateNumberText(c));
+        this.scene.add(tileToAdd);
         const pos = (4 * (y - 1)) + x;
         tileToAdd.position.x = tileCoord[pos].x;
         tileToAdd.position.y = tileCoord[pos].y;
@@ -52,38 +149,21 @@ class Effect2048 {
       }
     });
 
-    // composer.render();
-    this.renderer.render(this.scene, this.camera);
+    this.time += this.TIME_STEP;
+
+    this.scene.remove(this.ps.psMesh);
+    this.ps.update(this.time, this.TIME_STEP);
+    this.scene.add(this.ps.psMesh)
+
+    this.effectComposer.render();
+
     for (let i = 0; i < allObjects.length; i++) {
-      this.scene.remove(allObjects[i].name); 
+      this.scene.remove(allObjects[i]); 
     }
-    for (let i = 0; i < allObjects.length; i++) {
-      allObjects.pop();
-    } 
   }
 }
 
 // bloom 
-// const renderScene = new RenderPass(scene, camera);
-// const composer = new EffectComposer(renderer);
-
-// const bloomPass = new UnrealBloomPass(
-//   // vec2 representing resolution of the scene 
-//   new THREE.Vector2(width, height),
-//   // intensity of effect
-//   0.8,
-//   // radius of bloom
-//   0.1,
-//   // pixels that exhibit bloom (found through trial and error)
-//   0.01
-// );
-
-// const fxaaPass = new ShaderPass( FXAAShader );
-// const copyPass = new ShaderPass( CopyShader );
-// composer.addPass(renderScene);
-// composer.addPass(bloomPass);
-// composer.addPass(fxaaPass);
-// composer.addPass(copyPass);
 
 const effect2048 = new Effect2048();
 

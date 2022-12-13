@@ -16,6 +16,7 @@
   "dependencies": {
     "@types/jquery": "^3.5.14",
     "jquery": "^3.6.1",
+    "simplex-noise": "^4.0.1",
     "three": "^0.146.0"
   }
 }

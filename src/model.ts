@@ -1,3 +1,5 @@
+import * as THREE from 'three'
+
 /* Grid Positioning
  * For a grid that looks like
  [ ] [ ] [ ] [ ]
