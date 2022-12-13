@@ -148,18 +148,26 @@ class Effect2048 {
         allObjects.push(tileToAdd);
       }
     });
+    
+    const score = generateScore(this.g.score);
+    this.scene.add(score);
+    score.position.x += boardLen/3.7;
+    score.position.y += boardLen/2.1;
+    
 
     this.time += this.TIME_STEP;
 
-    this.scene.remove(this.ps.psMesh);
-    this.ps.update(this.time, this.TIME_STEP);
-    this.scene.add(this.ps.psMesh)
+    // this.scene.remove(this.ps.psMesh);
+    // this.ps.update(this.time, this.TIME_STEP);
+    // this.scene.add(this.ps.psMesh)
 
     this.effectComposer.render();
 
     for (let i = 0; i < allObjects.length; i++) {
       this.scene.remove(allObjects[i]); 
     }
+
+    this.scene.remove(score);
   }
 }
 
@@ -297,11 +305,9 @@ title.position.multiplyScalar(0);
 title.position.x -= boardLen/2;
 title.position.y += boardLen/2.1 + tileLen/2;
 
-// add score
-const score = generateScore(0);
-scene.add(score);
-score.position.x += boardLen/3.7;
-score.position.y += boardLen/2.1;
+// // add score
+// const score = generateScore(0);
+// scene.add(score);
 
 // add message
 const message = generateMessage();
@@ -315,7 +321,7 @@ effect2048.animate();
 
 // Game steps
 window.addEventListener("keydown", (event) => {
-  const g = effect2048.g;
+  let g = effect2048.g;
   const scoreBefore = g.score;
   let moved = false;
   if ("ArrowUp" === event.key) {
@@ -330,6 +336,7 @@ window.addEventListener("keydown", (event) => {
   else if ("ArrowRight" === event.key) {
     moved = g.moveRight();
   }
+
   const scored = scoreBefore - g.score !== 0;
   if (moved || scored) {
     g.spawn();
