@@ -1,5 +1,9 @@
 /* Functions for manipulating grid in updates and game changes. */
 import { GRID_SIZE, Position, Tile, Cell, Grid } from './model.ts';
+import { colors, generateBoxTileBorder, generate2, generate4, generate8, generate16, 
+  generate32, generate64, 
+  generate128, generate256, generate512, 
+  generate1024, generate2048, generateTitle, generateScore, generateMessage} from './view';
 
 const PROBABILITY_SPAWN_2 = 0.7;
 

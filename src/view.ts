@@ -523,14 +523,15 @@ function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH
   return group;
 }
 
-function generateScore(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generateScore(score: number, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
   const textGeo1 = new TextGeometry("Score", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/3,
     height: DEPTH/100,
   });
 
-  const textGeo2 = new TextGeometry("10000", {
+  const scoreString = String(score);
+  const textGeo2 = new TextGeometry(scoreString, {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/3,
     height: DEPTH/100,
@@ -575,5 +576,5 @@ function generateMessage(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENG
 }
 
 export { 
-  generateBoxTileBorder, generateNumberText, generateTitle, generateScore
+  colors, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage
 };

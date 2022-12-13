@@ -8,8 +8,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 
 import { Game } from './controller'
-import { Tile } from './model'
-import { generateBoxTileBorder, generateNumberText, generateTitle, generateScore} from './view'
+import { colors, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
+import { GRID_SIZE, Position, Tile, Cell, Grid } from './model'
 import { fragSrc, vertSrc } from './shaders'
 
 class Effect2048 {
@@ -82,11 +82,11 @@ effect2048.scene.add(shaderMesh);
 
 // TODO: !!! temp remove immediately after merge
 const scene = effect2048.scene;
-scene.background = new THREE.Color(0., 0.1, 0.1);
+scene.background = new THREE.Color(0.0, 0.1, 0.1);
 
 const boardTile = new Tile();
 // TODO: add option for board border generation with proper color
-//boardTile.value = colors.boardBorder;
+boardTile.value = colors.boardBorder;
 const boardLen = 5;
 const offset = 0.2;
 const board = generateBoxTileBorder(boardTile, 0.04, 0.3,  boardLen);
@@ -95,82 +95,82 @@ board.position.x -= boardLen/2;
 
 const tileLen = 1;
 
-const tile2 = new Tile();
-tile2.value = 2;
-const textMesh2 = generateNumberText(tile2);
-scene.add(textMesh2);
-textMesh2.position.x -= boardLen/2 - offset;
-textMesh2.position.y += boardLen/2 - tileLen/2 - offset;
+// const tile2 = new Tile();
+// tile2.value = 2;
+// const textMesh2 = generateNumberText(tile2);
+// scene.add(textMesh2);
+// textMesh2.position.x -= boardLen/2 - offset;
+// textMesh2.position.y += boardLen/2 - tileLen/2 - offset;
 
-const tile4 = new Tile();
-tile4.value = 4;
-const textMesh4 = generateNumberText(tile4);
-scene.add(textMesh4);
-textMesh4.position.x -= boardLen/2 - tileLen - (2 * offset);
-textMesh4.position.y += boardLen/2 - tileLen/2 - offset;
+// const tile4 = new Tile();
+// tile4.value = 4;
+// const textMesh4 = generateNumberText(tile4);
+// scene.add(textMesh4);
+// textMesh4.position.x -= boardLen/2 - tileLen - (2 * offset);
+// textMesh4.position.y += boardLen/2 - tileLen/2 - offset;
 
-const tile8 = new Tile();
-tile8.value = 8;
-const textMesh8 = generateNumberText(tile8);
-scene.add(textMesh8);
-textMesh8.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
-textMesh8.position.y += boardLen/2 - tileLen/2 - offset;
+// const tile8 = new Tile();
+// tile8.value = 8;
+// const textMesh8 = generateNumberText(tile8);
+// scene.add(textMesh8);
+// textMesh8.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
+// textMesh8.position.y += boardLen/2 - tileLen/2 - offset;
 
-const tile16 = new Tile();
-tile16.value = 16;
-const textMesh16 = generateNumberText(tile16);
-scene.add(textMesh16);
-textMesh16.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
-textMesh16.position.y += boardLen/2 - tileLen/2 - offset;
+// const tile16 = new Tile();
+// tile16.value = 16;
+// const textMesh16 = generateNumberText(tile16);
+// scene.add(textMesh16);
+// textMesh16.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
+// textMesh16.position.y += boardLen/2 - tileLen/2 - offset;
 
-const tile32 = new Tile();
-tile32.value = 32;
-const textMesh32 = generateNumberText(tile32);
-scene.add(textMesh32);
-textMesh32.position.x -= boardLen/2 - offset;
-textMesh32.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
+// const tile32 = new Tile();
+// tile32.value = 32;
+// const textMesh32 = generateNumberText(tile32);
+// scene.add(textMesh32);
+// textMesh32.position.x -= boardLen/2 - offset;
+// textMesh32.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
 
-const tile64 = new Tile();
-tile64.value = 64;
-const textMesh64 = generateNumberText(tile64);
-scene.add(textMesh64);
-textMesh64.position.x -= boardLen/2 - tileLen - (2 * offset);
-textMesh64.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
+// const tile64 = new Tile();
+// tile64.value = 64;
+// const textMesh64 = generateNumberText(tile64);
+// scene.add(textMesh64);
+// textMesh64.position.x -= boardLen/2 - tileLen - (2 * offset);
+// textMesh64.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
 
-const tile128 = new Tile();
-tile128.value = 128;
-const textMesh128 = generateNumberText(tile128);
-scene.add(textMesh128);
-textMesh128.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
-textMesh128.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
+// const tile128 = new Tile();
+// tile128.value = 128;
+// const textMesh128 = generateNumberText(tile128);
+// scene.add(textMesh128);
+// textMesh128.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
+// textMesh128.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
 
-const tile256 = new Tile();
-tile256.value = 256;
-const textMesh256 = generateNumberText(tile256);
-scene.add(textMesh256);
-textMesh256.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
-textMesh256.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
+// const tile256 = new Tile();
+// tile256.value = 256;
+// const textMesh256 = generateNumberText(tile256);
+// scene.add(textMesh256);
+// textMesh256.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
+// textMesh256.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
 
-const tile512 = new Tile();
-tile512.value = 512;
-const textMesh512 = generateNumberText(tile512);
-scene.add(textMesh512);
-textMesh512.position.x -= boardLen/2 - offset;
-textMesh512.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
+// const tile512 = new Tile();
+// tile512.value = 512;
+// const textMesh512 = generateNumberText(tile512);
+// scene.add(textMesh512);
+// textMesh512.position.x -= boardLen/2 - offset;
+// textMesh512.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
 
-const tile1024 = new Tile();
-tile1024.value = 1024;
-const textMesh1024 = generateNumberText(tile1024);
-scene.add(textMesh1024);
-textMesh1024.position.x -= boardLen/2 - tileLen - (2 * offset);
-textMesh1024.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
+// const tile1024 = new Tile();
+// tile1024.value = 1024;
+// const textMesh1024 = generateNumberText(tile1024);
+// scene.add(textMesh1024);
+// textMesh1024.position.x -= boardLen/2 - tileLen - (2 * offset);
+// textMesh1024.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
 
-const tile2048 = new Tile();
-tile2048.value = 2048;
-const textMesh2048 = generateNumberText(tile2048);
-scene.add(textMesh2048);
-textMesh2048.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
-textMesh2048.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
+// const tile2048 = new Tile();
+// tile2048.value = 2048;
+// const textMesh2048 = generateNumberText(tile2048);
+// scene.add(textMesh2048);
+// textMesh2048.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
+// textMesh2048.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
 
 
 // function printFormatted(p: THREE.Vector3): void {
@@ -199,7 +199,7 @@ title.position.x -= boardLen/2;
 title.position.y += boardLen/2.1 + tileLen/2;
 
 // add score
-const score = generateScore();
+const score = generateScore(0);
 scene.add(score);
 score.position.x += boardLen/3.7;
 score.position.y += boardLen/2.1;
