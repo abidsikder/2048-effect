@@ -45,12 +45,19 @@ class Particles {
       );
     }
 
+    this.psGeo = new THREE.BufferGeometry();
+    this.psGeo.setFromPoints(this.positions);
     this.updateMesh(0);
   }
 
   updateMesh(time: number) {
-    this.psGeo = new THREE.BufferGeometry();
-    this.psGeo.setFromPoints(this.positions);
+    const bgPositions = this.psGeo.getAttribute('position');
+    for (let i = 0; i < this.NUM_PARTICLES; i++) {
+      const p = this.positions[i];
+      bgPositions.setXYZ(i, p.x, p.y, p.z);
+    }
+    bgPositions.needsUpdate = true;
+
     const color = new THREE.Color(`hsl(${Math.abs(this.hueNoise(this.NUM_PARTICLES, time))*360}, 100%,50%)`);
     const psMat = new THREE.PointsMaterial({color});
     psMat.size = 0.1;
@@ -136,18 +143,18 @@ class Effect2048 {
   public animate() {
     requestAnimationFrame(this.animate);
 
-    const allObjects = new Array();
-    Grid.forEachCell(this.g.grid, (x, y, c) => {
-      if (c !== null) {
-        const tileToAdd = generateNumberText(c);
-        this.scene.add(tileToAdd);
-        const pos = (4 * (y - 1)) + x;
-        tileToAdd.position.x = tileCoord[pos].x;
-        tileToAdd.position.y = tileCoord[pos].y;
-        tileToAdd.position.z = tileCoord[pos].z;
-        allObjects.push(tileToAdd);
-      }
-    });
+    // const allObjects = new Array();
+    // Grid.forEachCell(this.g.grid, (x, y, c) => {
+    //   if (c !== null) {
+    //     const tileToAdd = generateNumberText(c);
+    //     this.scene.add(tileToAdd);
+    //     const pos = (4 * (y - 1)) + x;
+    //     tileToAdd.position.x = tileCoord[pos].x;
+    //     tileToAdd.position.y = tileCoord[pos].y;
+    //     tileToAdd.position.z = tileCoord[pos].z;
+    //     allObjects.push(tileToAdd);
+    //   }
+    // });
 
     this.time += this.TIME_STEP;
 
