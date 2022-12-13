@@ -3,7 +3,6 @@ import { Tile } from './model'
 import { TextFontShapes } from './fonts';
 import { Font } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import { Group } from 'three';
 
 // hex colors in strings for all elements in the game
 const colors = {
@@ -79,7 +78,60 @@ function generateBoxTileBorder(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 
   return boxTile;
 }
 
-function generate2(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generateNumberText(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+  const border = generateBoxTileBorder(t, THICKNESS, DEPTH*50, LENGTH);
+  const group = new THREE.Group();
+  group.add(border);
+
+  let textMeshes: THREE.Mesh[] = [];
+  switch(t.value) {
+    case 2:
+      textMeshes = generate2(DEPTH, LENGTH);
+      break;
+    case 4:
+      textMeshes = generate4(DEPTH, LENGTH);
+      break;
+    case 8:
+      textMeshes = generate8(DEPTH, LENGTH);
+      break;
+    case 16:
+      textMeshes = generate16(DEPTH, LENGTH);
+      break;
+    case 32:
+      textMeshes = generate32(DEPTH, LENGTH);
+      break;
+    case 64:
+      textMeshes = generate64(DEPTH, LENGTH);
+      break;
+    case 128:
+      textMeshes = generate128(DEPTH, LENGTH);
+      break;
+    case 256:
+      textMeshes = generate256(DEPTH, LENGTH);
+      break;
+    case 512:
+      textMeshes = generate512(DEPTH, LENGTH);
+      break;
+    case 1024:
+      textMeshes = generate1024(DEPTH, LENGTH);
+      break;
+    case 2048:
+      textMeshes = generate2048(DEPTH, LENGTH);
+      break;
+    default:
+      alert("Error in generating the proper text Meshes");
+      break;
+  }
+
+  // add all the ones in the textmesh array to the group
+  for (let i = 0; i < textMeshes.length; i++) {
+    group.add(textMeshes[i]);
+  }
+
+  return group;
+}
+
+function generate2(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
     const textGeo2 = new TextGeometry("2", {
       font: TextFontShapes["SemiBold"] as Font,
       size: LENGTH/1.5,
@@ -93,17 +145,10 @@ function generate2(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LE
     textMesh.position.y -= LENGTH * 0.3;
     textMesh.position.z -= DEPTH/2;
 
-    t.value = 2;
-    const boxTile = generateBoxTileBorder(t);
-
-    const group = new THREE.Group();
-    group.add(textMesh);
-    group.add(boxTile);
-
-    return group;
+    return [textMesh];
 }
 
-function generate4(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate4(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo4 = new TextGeometry("4", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/1.5,
@@ -117,17 +162,10 @@ function generate4(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LE
   textMesh.position.y -= LENGTH * 0.3;
   textMesh.position.z -= DEPTH/2;
   
-  t.value = 4;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(textMesh);
-  group.add(boxTile);
-
-  return group;
+  return [textMesh];
 }
 
-function generate8(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate8(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo8 = new TextGeometry("8", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/1.5,
@@ -141,23 +179,15 @@ function generate8(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LE
   textMesh.position.y -= LENGTH * 0.3;
   textMesh.position.z -= DEPTH/2;
   
-  t.value = 8;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(textMesh);
-  group.add(boxTile);
-
-  return group;
+  return [textMesh];
 }
 
-function generate16(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate16(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo1 = new TextGeometry("1", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/2,
     height: DEPTH,
   });
-
   const textGeo6 = new TextGeometry("6", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/2,
@@ -168,7 +198,6 @@ function generate16(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, L
   const textMesh1 = new THREE.Mesh(textGeo1, mat);
   const textMesh6 = new THREE.Mesh(textGeo6, mat);
 
-
   textMesh1.position.x += LENGTH * 0.15;
   textMesh1.position.y -= LENGTH * 0.25;
   textMesh1.position.z -= DEPTH/2;
@@ -177,18 +206,10 @@ function generate16(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, L
   textMesh6.position.y -= LENGTH * 0.25;
   textMesh6.position.z -= DEPTH/2;
 
-  t.value = 16;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(boxTile);
-  group.add(textMesh1);
-  group.add(textMesh6);
-
-  return group;
+  return [textMesh1, textMesh6];
 }
 
-function generate32(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate32(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo3 = new TextGeometry("3", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/2,
@@ -205,7 +226,6 @@ function generate32(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, L
   const textMesh3 = new THREE.Mesh(textGeo3, mat);
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
 
-
   textMesh3.position.x += LENGTH * 0.13;
   textMesh3.position.y -= LENGTH * 0.25;
   textMesh3.position.z -= DEPTH/2;
@@ -214,18 +234,10 @@ function generate32(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, L
   textMesh2.position.y -= LENGTH * 0.25;
   textMesh2.position.z -= DEPTH/2;
 
-  t.value = 32;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(boxTile)
-  group.add(textMesh3);
-  group.add(textMesh2);
-
-  return group;
+  return [textMesh3, textMesh2];
 }
 
-function generate64(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate64(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo6 = new TextGeometry("6", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/2,
@@ -251,18 +263,10 @@ function generate64(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, L
   textMesh4.position.y -= LENGTH * 0.25;
   textMesh4.position.z -= DEPTH/2;
 
-  t.value = 64;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(boxTile)
-  group.add(textMesh6);
-  group.add(textMesh4);
-
-  return group;
+  return [textMesh6, textMesh4];
 }
 
-function generate128(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate128(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo1 = new TextGeometry("1", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/2.5,
@@ -287,7 +291,6 @@ function generate128(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, 
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
   const textMesh8 = new THREE.Mesh(textGeo8, mat);
 
-
   textMesh1.position.x += LENGTH * 0.08;
   textMesh1.position.y -= LENGTH * 0.2;
   textMesh1.position.z -= DEPTH/2;
@@ -300,20 +303,10 @@ function generate128(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, 
   textMesh8.position.y -= LENGTH * 0.2;
   textMesh8.position.z -= DEPTH/2;
 
-  t.value = 128;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(boxTile)
-  group.add(textMesh1);
-  group.add(textMesh2);
-  group.add(textMesh8);
-
-  return group;
+  return [textMesh1, textMesh2, textMesh8];
 }
 
-
-function generate256(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate256(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo2 = new TextGeometry("2", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/2.5,
@@ -351,19 +344,10 @@ function generate256(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, 
   textMesh6.position.y -= LENGTH * 0.2;
   textMesh6.position.z -= DEPTH/2;
 
-  t.value = 256;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(boxTile)
-  group.add(textMesh2);
-  group.add(textMesh5);
-  group.add(textMesh6);
-
-  return group;
+  return [textMesh2, textMesh5, textMesh6];
 }
 
-function generate512(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate512(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo5 = new TextGeometry("5", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/2.5,
@@ -388,7 +372,6 @@ function generate512(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, 
   const textMesh1 = new THREE.Mesh(textGeo1, mat);
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
 
-
   textMesh5.position.x += LENGTH * 0.09;
   textMesh5.position.y -= LENGTH * 0.2;
   textMesh5.position.z -= DEPTH/2;
@@ -401,19 +384,10 @@ function generate512(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, 
   textMesh2.position.y -= LENGTH * 0.2;
   textMesh2.position.z -= DEPTH/2;
 
-  t.value = 512;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(boxTile)
-  group.add(textMesh5);
-  group.add(textMesh1);
-  group.add(textMesh2);
-
-  return group;
+  return [textMesh5, textMesh1, textMesh2];
 }
 
-function generate1024(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate1024(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo1 = new TextGeometry("1", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/3.7,
@@ -446,7 +420,6 @@ function generate1024(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100,
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
   const textMesh4 = new THREE.Mesh(textGeo4, mat);
 
-
   textMesh1.position.x += LENGTH * 0.09;
   textMesh1.position.y -= LENGTH * 0.12;
   textMesh1.position.z -= DEPTH/2;
@@ -463,20 +436,10 @@ function generate1024(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100,
   textMesh4.position.y -= LENGTH * 0.12;
   textMesh4.position.z -= DEPTH/2;
 
-  t.value = 1024;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(boxTile)
-  group.add(textMesh1);
-  group.add(textMesh0);
-  group.add(textMesh2);
-  group.add(textMesh4);
-
-  return group;
+  return [textMesh1, textMesh0, textMesh2, textMesh4];
 }
 
-function generate2048(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generate2048(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[] {
   const textGeo2 = new TextGeometry("2", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/3.7,
@@ -501,14 +464,12 @@ function generate2048(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100,
     height: DEPTH/100,
   });
 
-
   const color = colors[2048];
   const mat = new THREE.MeshBasicMaterial({color});
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
   const textMesh0 = new THREE.Mesh(textGeo0, mat);
   const textMesh4 = new THREE.Mesh(textGeo4, mat);
   const textMesh8 = new THREE.Mesh(textGeo8, mat);
-
 
   textMesh2.position.x += LENGTH * 0.09;
   textMesh2.position.y -= LENGTH * 0.12;
@@ -526,17 +487,7 @@ function generate2048(t:Tile, THICKNESS: number = 0.04, DEPTH: number = 0.3/100,
   textMesh8.position.y -= LENGTH * 0.12;
   textMesh8.position.z -= DEPTH/200;
 
-  t.value = 2048;
-  const boxTile = generateBoxTileBorder(t);
-
-  const group = new THREE.Group();
-  group.add(boxTile)
-  group.add(textMesh2);
-  group.add(textMesh0);
-  group.add(textMesh4);
-  group.add(textMesh8);
-
-  return group;
+  return [textMesh2, textMesh0, textMesh4, textMesh8];
 }
 
 function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
@@ -624,10 +575,5 @@ function generateMessage(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENG
 }
 
 export { 
-  generateBoxTileBorder, 
-  generate2, generate4, generate8, generate16, 
-  generate32, generate64, 
-  generate128, generate256, generate512, 
-  generate1024, generate2048, generateTitle, generateScore,
-  generateMessage
+  generateBoxTileBorder, generateNumberText, generateTitle, generateScore
 };

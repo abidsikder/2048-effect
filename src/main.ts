@@ -9,10 +9,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import { Game } from './controller'
 import { Tile } from './model'
-import { generateBoxTileBorder, generate2, generate4, generate8, generate16, 
-  generate32, generate64, 
-  generate128, generate256, generate512, 
-  generate1024, generate2048, generateTitle, generateScore, generateMessage} from './view'
+import { generateBoxTileBorder, generateNumberText, generateTitle, generateScore} from './view'
 import { fragSrc, vertSrc } from './shaders'
 
 class Effect2048 {
@@ -96,69 +93,81 @@ const board = generateBoxTileBorder(boardTile, 0.04, 0.3,  boardLen);
 scene.add(board);
 board.position.x -= boardLen/2;
 
-const tile2 = new Tile();
 const tileLen = 1;
-const textMesh2 = generate2(tile2);
+
+const tile2 = new Tile();
+tile2.value = 2;
+const textMesh2 = generateNumberText(tile2);
 scene.add(textMesh2);
 textMesh2.position.x -= boardLen/2 - offset;
 textMesh2.position.y += boardLen/2 - tileLen/2 - offset;
 
 const tile4 = new Tile();
-const textMesh4 = generate4(tile4);
+tile4.value = 4;
+const textMesh4 = generateNumberText(tile4);
 scene.add(textMesh4);
 textMesh4.position.x -= boardLen/2 - tileLen - (2 * offset);
 textMesh4.position.y += boardLen/2 - tileLen/2 - offset;
 
 const tile8 = new Tile();
-const textMesh8 = generate8(tile8);
+tile8.value = 8;
+const textMesh8 = generateNumberText(tile8);
 scene.add(textMesh8);
 textMesh8.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
 textMesh8.position.y += boardLen/2 - tileLen/2 - offset;
 
 const tile16 = new Tile();
-const textMesh16 = generate16(tile16);
+tile16.value = 16;
+const textMesh16 = generateNumberText(tile16);
 scene.add(textMesh16);
 textMesh16.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
 textMesh16.position.y += boardLen/2 - tileLen/2 - offset;
 
 const tile32 = new Tile();
-const textMesh32 = generate32(tile32);
+tile32.value = 32;
+const textMesh32 = generateNumberText(tile32);
 scene.add(textMesh32);
 textMesh32.position.x -= boardLen/2 - offset;
 textMesh32.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
 
 const tile64 = new Tile();
-const textMesh64 = generate64(tile64);
+tile64.value = 64;
+const textMesh64 = generateNumberText(tile64);
 scene.add(textMesh64);
 textMesh64.position.x -= boardLen/2 - tileLen - (2 * offset);
 textMesh64.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
 
 const tile128 = new Tile();
-const textMesh128 = generate128(tile128);
+tile128.value = 128;
+const textMesh128 = generateNumberText(tile128);
 scene.add(textMesh128);
 textMesh128.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
 textMesh128.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
 
 const tile256 = new Tile();
-const textMesh256 = generate256(tile256);
+tile256.value = 256;
+const textMesh256 = generateNumberText(tile256);
 scene.add(textMesh256);
 textMesh256.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
 textMesh256.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
 
 const tile512 = new Tile();
-const textMesh512 = generate512(tile512);
+tile512.value = 512;
+const textMesh512 = generateNumberText(tile512);
 scene.add(textMesh512);
 textMesh512.position.x -= boardLen/2 - offset;
 textMesh512.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
 
 const tile1024 = new Tile();
-const textMesh1024 = generate1024(tile1024);
+tile1024.value = 1024;
+const textMesh1024 = generateNumberText(tile1024);
 scene.add(textMesh1024);
 textMesh1024.position.x -= boardLen/2 - tileLen - (2 * offset);
 textMesh1024.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
 
 const tile2048 = new Tile();
-const textMesh2048 = generate2048(tile2048);
+tile2048.value = 2048;
+const textMesh2048 = generateNumberText(tile2048);
 scene.add(textMesh2048);
 textMesh2048.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
 textMesh2048.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
