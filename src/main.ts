@@ -119,7 +119,7 @@ class Effect2048 {
       // vec2 representing resolution of the scene 
       new THREE.Vector2(width, height),
       // intensity of effect
-      0.4,
+      0.0,
       // radius of bloom
       0.04,
       // pixels that exhibit bloom (found through trial and error)
@@ -304,12 +304,33 @@ const tileLen = 1;
 // pos13x: textMesh.position.x -= boardLen/2 - offset
 // pos13y: textMesh.position.x -= boardLen/2 - tileLen/2 - offset
 
+
 // add title: 2048 Effect
 const title = generateTitle();
 scene.add(title);
 title.position.multiplyScalar(0);
 title.position.x -= boardLen/2;
 title.position.y += boardLen/2.1 + tileLen/2;
+
+// const pointLight = new THREE.PointLight( 0xff0000, 1, 100 );
+// pointLight.position.set( 10, 10, 10 );
+// scene.add( pointLight );
+
+// const sphereSize = 1;
+// const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
+// scene.add( pointLightHelper );
+
+// add light 
+const light = new THREE.PointLight(0x0000FF, 1);
+light.position.set(title.position.x + tileLen, title.position.y, title.position.z + tileLen);
+light.castShadow = true;
+scene.add(light);
+
+// add light 
+const light2 = new THREE.PointLight(0xFF0000, 1);
+light2.position.set(title.position.x - tileLen, title.position.y +  tileLen, title.position.z + 1);
+light2.castShadow = true;
+scene.add(light2);
 
 // // add score
 // const score = generateScore(0);

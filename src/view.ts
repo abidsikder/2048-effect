@@ -503,8 +503,12 @@ function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH
     height: DEPTH/100,
   });
 
-  const color = new THREE.Color(0, 0, 0);
-  const mat = new THREE.MeshBasicMaterial({color});
+  const color = new THREE.Color(1, 1, 1);
+  const mat = new THREE.MeshLambertMaterial({
+    color//,
+    // opacity: 1,
+    // transparent: true
+  });
   const textMesh1 = new THREE.Mesh(textGeo1, mat);
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
 
