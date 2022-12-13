@@ -17,7 +17,7 @@ const colors = {
   512: 0x8F65E9,
   1024: 0xD868E1,
   2048: 0xDC629D,
-  boardBorder: 0x00A3FF,
+  0: 0x00A3FF, //boardBorder
   titleText: 0x0B0000,
   titleGlow: 0x28D0E6,
   scoreLabel: 0x4CC3DD,
@@ -32,22 +32,22 @@ const colors = {
 
 // coordinates of the tiles 
 const tileCoord= {
-  1: new THREE.Vector3(-2.3, 1.8, 0),
-  2: new THREE.Vector3(-1.1, 1.8, 0),
-  3: new THREE.Vector3(0.10000000000000009, 1.8, 0),
-  4: new THREE.Vector3(1.3, 1.8, 0),
-  5: new THREE.Vector3(-2.3, 0.6, 0),
-  6: new THREE.Vector3(-1.1, 0.6, 0),
-  7: new THREE.Vector3(0.10000000000000009, 0.6, 0),
-  8: new THREE.Vector3(1.3, 0.6, 0),
-  9: new THREE.Vector3(-2.3, -0.6000000000000001, 0),
-  10: new THREE.Vector3(-1.1, -0.6000000000000001, 0),
-  11: new THREE.Vector3(0.10000000000000009, -0.6000000000000001, 0),
-  12: new THREE.Vector3(1.3, -0.6000000000000001, 0),
-  13: new THREE.Vector3(-2.3, -1.8, 0),
-  14: new THREE.Vector3(-1.1, -1.8, 0),
-  15: new THREE.Vector3(0.10000000000000009, -1.8, 0),
-  16: new THREE.Vector3(1.3, -1.8, 0)
+  13: new THREE.Vector3(-2.3, 1.8, 0),
+  14: new THREE.Vector3(-1.1, 1.8, 0),
+  15: new THREE.Vector3(0.10000000000000009, 1.8, 0),
+  16: new THREE.Vector3(1.3, 1.8, 0),
+  9: new THREE.Vector3(-2.3, 0.6, 0),
+  10: new THREE.Vector3(-1.1, 0.6, 0),
+  11: new THREE.Vector3(0.10000000000000009, 0.6, 0),
+  12: new THREE.Vector3(1.3, 0.6, 0),
+  5: new THREE.Vector3(-2.3, -0.6000000000000001, 0),
+  6: new THREE.Vector3(-1.1, -0.6000000000000001, 0),
+  7: new THREE.Vector3(0.10000000000000009, -0.6000000000000001, 0),
+  8: new THREE.Vector3(1.3, -0.6000000000000001, 0),
+  1: new THREE.Vector3(-2.3, -1.8, 0),
+  2: new THREE.Vector3(-1.1, -1.8, 0),
+  3: new THREE.Vector3(0.10000000000000009, -1.8, 0),
+  4: new THREE.Vector3(1.3, -1.8, 0)
 };
 
 function generateBoxTileBorder(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1): THREE.Mesh {
@@ -503,7 +503,7 @@ function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH
     height: DEPTH/100,
   });
 
-  const color = new THREE.Color( 1, 0, 0 )
+  const color = new THREE.Color(0, 0, 0);
   const mat = new THREE.MeshBasicMaterial({color});
   const textMesh1 = new THREE.Mesh(textGeo1, mat);
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
@@ -537,7 +537,7 @@ function generateScore(score: number, THICKNESS: number = 0.04, DEPTH: number = 
     height: DEPTH/100,
   });
 
-  const color = new THREE.Color( 1, 0, 0 )
+  const color = new THREE.Color(colors.scoreNumber)
   const mat = new THREE.MeshBasicMaterial({color});
   const textMesh1 = new THREE.Mesh(textGeo1, mat);
   const textMesh2 = new THREE.Mesh(textGeo2, mat);
@@ -564,7 +564,7 @@ function generateMessage(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENG
     height: DEPTH/100,
   });
 
-  const color = new THREE.Color( 1, 0, 0 )
+  const color = new THREE.Color(colors.scoreNumber)
   const mat = new THREE.MeshBasicMaterial({color});
   const textMesh1 = new THREE.Mesh(textGeo1, mat);
 
@@ -576,5 +576,6 @@ function generateMessage(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENG
 }
 
 export { 
-  colors, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage
+  colors, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage,
+  tileCoord
 };

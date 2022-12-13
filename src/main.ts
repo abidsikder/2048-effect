@@ -8,8 +8,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 
 import { Game } from './controller'
-import { colors, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
-import { GRID_SIZE, Position, Tile, Cell, Grid } from './model'
+import { colors, tileCoord, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
+import { GRID_SIZE, Position, Tile, Grid } from './model'
 import { fragSrc, vertSrc } from './shaders'
 
 class Effect2048 {
@@ -39,8 +39,27 @@ class Effect2048 {
   public animate() {
     requestAnimationFrame(this.animate);
 
+    const allObjects = new Array();
+    Grid.forEachCell(this.g.grid, (x, y, c) => {
+      if (c !== null) {
+        const tileToAdd = generateNumberText(c);
+        this.scene.add(generateNumberText(c));
+        const pos = (4 * (y - 1)) + x;
+        tileToAdd.position.x = tileCoord[pos].x;
+        tileToAdd.position.y = tileCoord[pos].y;
+        tileToAdd.position.z = tileCoord[pos].z;
+        allObjects.push(tileToAdd);
+      }
+    });
+
     // composer.render();
     this.renderer.render(this.scene, this.camera);
+    for (let i = 0; i < allObjects.length; i++) {
+      this.scene.remove(allObjects[i].name); 
+    }
+    for (let i = 0; i < allObjects.length; i++) {
+      allObjects.pop();
+    } 
   }
 }
 
@@ -71,13 +90,13 @@ const effect2048 = new Effect2048();
 // @ts-ignore Controls is not used but does not need to be since initializing the object sets up the orbit controls for us
 const orbitControls = new OrbitControls(effect2048.camera, effect2048.renderer.domElement)
 
-const shaderGeo = new THREE.BoxGeometry(1,1,1);
-const shaderMat = new THREE.ShaderMaterial({
-  fragmentShader: fragSrc,
-  vertexShader: vertSrc,
-});
-const shaderMesh = new THREE.Mesh(shaderGeo,shaderMat);
-effect2048.scene.add(shaderMesh);
+// const shaderGeo = new THREE.BoxGeometry(1,1,1);
+// const shaderMat = new THREE.ShaderMaterial({
+//   fragmentShader: fragSrc,
+//   vertexShader: vertSrc,
+// });
+// const shaderMesh = new THREE.Mesh(shaderGeo,shaderMat);
+// effect2048.scene.add(shaderMesh);
 
 
 // TODO: !!! temp remove immediately after merge
@@ -86,7 +105,7 @@ scene.background = new THREE.Color(0.0, 0.1, 0.1);
 
 const boardTile = new Tile();
 // TODO: add option for board border generation with proper color
-boardTile.value = colors.boardBorder;
+boardTile.value = 0;
 const boardLen = 5;
 const offset = 0.2;
 const board = generateBoxTileBorder(boardTile, 0.04, 0.3,  boardLen);
@@ -204,14 +223,14 @@ scene.add(score);
 score.position.x += boardLen/3.7;
 score.position.y += boardLen/2.1;
 
-effect2048.animate();
-
 // add message
 const message = generateMessage();
 scene.add(message);
 message.position.x -= boardLen/2 - tileLen;
 message.position.y -= boardLen/1.4;
 
+effect2048.g.spawn();
+effect2048.g.spawn();
 effect2048.animate();
 
 // Game steps
