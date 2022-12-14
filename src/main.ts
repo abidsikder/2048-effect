@@ -228,7 +228,6 @@ class Effect2048 {
 
     this.scene.remove(this.ps.psMesh);
     this.ps.psMesh.geometry.dispose();
-    console.log(this.ps.psMesh);
     this.ps.update(this.time, this.TIME_STEP);
     this.scene.add(this.ps.psMesh)
 
@@ -365,6 +364,5 @@ window.addEventListener("keydown", (event) => {
     else if (g.isGameOver()) {
       alert("Game over");
     }
-    console.log(g.toString());
   }
 })
