@@ -118,7 +118,7 @@ class Game {
           if (cp === null) continue;
 
           // check if it's indeed mergeable
-          if (c.value !== cp.value) continue;
+          if (c.value !== cp.value) break;
 
           // Create new tile
           const newTile = this.mergeTwoTiles(cp, c);
@@ -180,7 +180,7 @@ class Game {
           if (cp === null) continue;
 
           // check if it's indeed mergeable
-          if (c.value !== cp.value) continue;
+          if (c.value !== cp.value) break;
 
           // Create new tile
           const newTile = this.mergeTwoTiles(cp, c);
@@ -242,7 +242,7 @@ class Game {
           if (cp === null) continue;
 
           // Check if it's indeed mergeable
-          if (c.value !== cp.value) continue;
+          if (c.value !== cp.value) break;
 
           // Create new tile
           const newTile = this.mergeTwoTiles(cp, c);
@@ -305,7 +305,7 @@ class Game {
           if (cp === null) continue;
 
           // check if it's indeed mergeable
-          if (c.value !== cp.value) continue;
+          if (c.value !== cp.value) break;
 
           // Create new tile
           const newTile = this.mergeTwoTiles(cp, c);
