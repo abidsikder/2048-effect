@@ -9,6 +9,9 @@ import { createNoise2D, NoiseFunction2D, createNoise4D, NoiseFunction4D } from '
 import { Game } from './controller'
 import { tileCoord, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
 import { Tile, Grid } from './model'
+import { fragSrc, vertSrc } from './shaders'
+
+const BOARD_LEN = 5;
 
 class Particles {
   NUM_PARTICLES = 100;
@@ -134,10 +137,63 @@ class Effect2048 {
     this.ps = new Particles();
     this.scene.add(this.ps.psMesh);
 
+    /* Board Border */
+    this.boardBorder = this.generateBoardBorder();
+    this.scene.add(this.boardBorder);
+
     // removes "this is undefined" error from animate() function
     this.animate = this.animate.bind(this)
   }
 
+  boardBorder: THREE.Mesh;
+
+  generateBoardBorder(): THREE.Mesh {
+    const THICKNESS:number = 0.04;
+    const DEPTH: number = 0.3
+    const BOARD_LENGTH: number = 5;
+
+    // const shaderGeo = new THREE.BoxGeometry(1,1,1);
+    // const shaderMat = new THREE.ShaderMaterial({
+    //   fragmentShader: fragSrc,
+    //   vertexShader: vertSrc,
+    // });
+    // const shaderMesh = new THREE.Mesh(shaderGeo,shaderMat);
+
+    // const mat = new THREE.MeshBasicMaterial({color});
+    const mat = new THREE.ShaderMaterial({
+      fragmentShader: fragSrc,
+      vertexShader: vertSrc,
+      uniforms: {
+        "time": {
+          "value": this.time
+        }
+      }
+    });
+
+    const sideGeo = new THREE.BoxGeometry(THICKNESS, BOARD_LENGTH, DEPTH);
+    const topBotGeo = new THREE.BoxGeometry(BOARD_LENGTH - 2*THICKNESS, THICKNESS, DEPTH);
+
+    const leftMesh = new THREE.Mesh(sideGeo, mat);
+    const rightMesh = new THREE.Mesh(sideGeo, mat);
+    const topMesh = new THREE.Mesh(topBotGeo, mat);
+    const botMesh = new THREE.Mesh(topBotGeo, mat);
+
+    rightMesh.position.x += BOARD_LENGTH - THICKNESS;
+    topMesh.position.x += BOARD_LENGTH/2 - THICKNESS/2;
+    topMesh.position.y += BOARD_LENGTH/2 - THICKNESS/2;
+    botMesh.position.x += BOARD_LENGTH/2 - THICKNESS/2;
+    botMesh.position.y -= BOARD_LENGTH/2 - THICKNESS/2;
+
+    const boxTile = new THREE.Group();
+    boxTile.add(leftMesh);
+    boxTile.add(rightMesh);
+    boxTile.add(topMesh);
+    boxTile.add(botMesh);
+    boxTile.position.x -= BOARD_LEN/2;
+
+    // @ts-ignore weird error
+    return boxTile;
+  }
 
   public animate() {
     requestAnimationFrame(this.animate);
@@ -157,14 +213,18 @@ class Effect2048 {
 
     const score = generateScore(this.g.score);
     this.scene.add(score);
-    score.position.x += boardLen/3.7;
-    score.position.y += boardLen/2.1;
+    score.position.x += BOARD_LEN/3.7;
+    score.position.y += BOARD_LEN/2.1;
 
     this.time += this.TIME_STEP;
 
     this.scene.remove(this.ps.psMesh);
     this.ps.update(this.time, this.TIME_STEP);
     this.scene.add(this.ps.psMesh)
+
+    this.scene.remove(this.boardBorder);
+    this.boardBorder = this.generateBoardBorder();
+    this.scene.add(this.boardBorder);
 
     this.effectComposer.render();
 
@@ -176,140 +236,20 @@ class Effect2048 {
   }
 }
 
-// bloom 
-
 const effect2048 = new Effect2048();
 
 // @ts-ignore Controls is not used but does not need to be since initializing the object sets up the orbit controls for us
 const orbitControls = new OrbitControls(effect2048.camera, effect2048.renderer.domElement)
 
-// const shaderGeo = new THREE.BoxGeometry(1,1,1);
-// const shaderMat = new THREE.ShaderMaterial({
-//   fragmentShader: fragSrc,
-//   vertexShader: vertSrc,
-// });
-// const shaderMesh = new THREE.Mesh(shaderGeo,shaderMat);
-// effect2048.scene.add(shaderMesh);
-
-
-// TODO: !!! temp remove immediately after merge
-const scene = effect2048.scene;
-scene.background = new THREE.Color(0.0, 0.1, 0.1);
-
-const boardTile = new Tile();
-// TODO: add option for board border generation with proper color
-boardTile.value = 0;
-const boardLen = 5;
-const offset = 0.2;
-const board = generateBoxTileBorder(boardTile, 0.04, 0.3,  boardLen);
-scene.add(board);
-board.position.x -= boardLen/2;
-
-const tileLen = 1;
-
-// const tile2 = new Tile();
-// tile2.value = 2;
-// const textMesh2 = generateNumberText(tile2);
-// scene.add(textMesh2);
-// textMesh2.position.x -= boardLen/2 - offset;
-// textMesh2.position.y += boardLen/2 - tileLen/2 - offset;
-
-// const tile4 = new Tile();
-// tile4.value = 4;
-// const textMesh4 = generateNumberText(tile4);
-// scene.add(textMesh4);
-// textMesh4.position.x -= boardLen/2 - tileLen - (2 * offset);
-// textMesh4.position.y += boardLen/2 - tileLen/2 - offset;
-
-// const tile8 = new Tile();
-// tile8.value = 8;
-// const textMesh8 = generateNumberText(tile8);
-// scene.add(textMesh8);
-// textMesh8.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
-// textMesh8.position.y += boardLen/2 - tileLen/2 - offset;
-
-// const tile16 = new Tile();
-// tile16.value = 16;
-// const textMesh16 = generateNumberText(tile16);
-// scene.add(textMesh16);
-// textMesh16.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
-// textMesh16.position.y += boardLen/2 - tileLen/2 - offset;
-
-// const tile32 = new Tile();
-// tile32.value = 32;
-// const textMesh32 = generateNumberText(tile32);
-// scene.add(textMesh32);
-// textMesh32.position.x -= boardLen/2 - offset;
-// textMesh32.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
-
-// const tile64 = new Tile();
-// tile64.value = 64;
-// const textMesh64 = generateNumberText(tile64);
-// scene.add(textMesh64);
-// textMesh64.position.x -= boardLen/2 - tileLen - (2 * offset);
-// textMesh64.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
-
-// const tile128 = new Tile();
-// tile128.value = 128;
-// const textMesh128 = generateNumberText(tile128);
-// scene.add(textMesh128);
-// textMesh128.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
-// textMesh128.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
-
-// const tile256 = new Tile();
-// tile256.value = 256;
-// const textMesh256 = generateNumberText(tile256);
-// scene.add(textMesh256);
-// textMesh256.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
-// textMesh256.position.y += boardLen/2 - (3/2 * tileLen) - (2 * offset);
-
-// const tile512 = new Tile();
-// tile512.value = 512;
-// const textMesh512 = generateNumberText(tile512);
-// scene.add(textMesh512);
-// textMesh512.position.x -= boardLen/2 - offset;
-// textMesh512.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
-
-// const tile1024 = new Tile();
-// tile1024.value = 1024;
-// const textMesh1024 = generateNumberText(tile1024);
-// scene.add(textMesh1024);
-// textMesh1024.position.x -= boardLen/2 - tileLen - (2 * offset);
-// textMesh1024.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
-
-// const tile2048 = new Tile();
-// tile2048.value = 2048;
-// const textMesh2048 = generateNumberText(tile2048);
-// scene.add(textMesh2048);
-// textMesh2048.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
-// textMesh2048.position.y += boardLen/2 - (5/2 * tileLen) - (3 * offset);
-
-
-// function printFormatted(p: THREE.Vector3): void {
-//   console.log(`new THREE.Vector3(${p.x}, ${p.y}, ${p.z})`)
-// }
-
-// console.log("2 position")
-// printFormatted(textMesh2.position)
-
-// pos1x: textMesh.position.x -= boardLen/2 - offset;
-// pos1y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
-// pos2x: textMesh.position.x -= boardLen/2 - tileLen - (2 * offset);
-// pos2y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
-// pos3x: textMesh.position.x -= boardLen/2 - (2 * tileLen) - (3 * offset);
-// pos3y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
-// pos4x: textMesh.position.x -= boardLen/2 - (3 * tileLen) - (4 * offset);
-// pos4y: textMesh.position.y += boardLen/2 - tileLen/2 - offset;
-// pos13x: textMesh.position.x -= boardLen/2 - offset
-// pos13y: textMesh.position.x -= boardLen/2 - tileLen/2 - offset
-
+effect2048.scene.background = new THREE.Color(0.0, 0.1, 0.1);
 
 // add title: 2048 Effect
 const title = generateTitle();
-scene.add(title);
+effect2048.scene.add(title);
+const tileLen = 1;
 title.position.multiplyScalar(0);
-title.position.x -= boardLen/2;
-title.position.y += boardLen/2.1 + tileLen/2;
+title.position.x -= BOARD_LEN/2;
+title.position.y += BOARD_LEN/2.1 + tileLen/2;
 
 // const pointLight = new THREE.PointLight( 0xff0000, 1, 100 );
 // pointLight.position.set( 10, 10, 10 );
@@ -323,13 +263,13 @@ title.position.y += boardLen/2.1 + tileLen/2;
 const light = new THREE.PointLight(0x0000FF, 1);
 light.position.set(title.position.x + tileLen, title.position.y, title.position.z + tileLen);
 light.castShadow = true;
-scene.add(light);
+effect2048.scene.add(light);
 
 // add light 
 const light2 = new THREE.PointLight(0xFF0000, 1);
 light2.position.set(title.position.x - tileLen, title.position.y +  tileLen, title.position.z + 1);
 light2.castShadow = true;
-scene.add(light2);
+effect2048.scene.add(light2);
 
 
 //adding background sound
@@ -361,9 +301,9 @@ audioLoader.load("./sound/background.mp3", function(buffer) {
 
 // add message
 const message = generateMessage();
-scene.add(message);
-message.position.x -= boardLen/2 - tileLen;
-message.position.y -= boardLen/1.4;
+effect2048.scene.add(message);
+message.position.x -= BOARD_LEN/2 - tileLen;
+message.position.y -= BOARD_LEN/1.4;
 
 effect2048.g.spawn();
 effect2048.g.spawn();
