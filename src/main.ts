@@ -7,12 +7,11 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { createNoise2D, NoiseFunction2D, createNoise4D, NoiseFunction4D } from 'simplex-noise'
 
 import { Game } from './controller'
-import { colors, tileCoord, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
-import { GRID_SIZE, Position, Tile, Grid } from './model'
-import { fragSrc, vertSrc } from './shaders'
+import { tileCoord, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
+import { Tile, Grid } from './model'
 
 class Particles {
-  NUM_PARTICLES = 500;
+  NUM_PARTICLES = 100;
 
   positions: THREE.Vector3[] = [];
   velocities: THREE.Vector3[] = [];
@@ -34,9 +33,9 @@ class Particles {
 
     for (let i = 0; i < this.NUM_PARTICLES; i++) {
       this.positions[i] = new THREE.Vector3(
-        THREE.MathUtils.randFloatSpread( 7 ),
-        THREE.MathUtils.randFloatSpread( 7 ),
-        THREE.MathUtils.randFloatSpread( 7 )
+        THREE.MathUtils.randFloatSpread( 3 ),
+        THREE.MathUtils.randFloatSpread( 3 ),
+        THREE.MathUtils.randFloatSpread( 3 )
       );
       this.velocities[i] = new THREE.Vector3(
         THREE.MathUtils.randFloatSpread( 3 ),
@@ -132,7 +131,6 @@ class Effect2048 {
     this.effectComposer = effectComposer;
 
     /* Particles */
-
     this.ps = new Particles();
     this.scene.add(this.ps.psMesh);
 
@@ -175,27 +173,8 @@ class Effect2048 {
     }
 
     this.scene.remove(score);
-
-    // add sound if score is updated
-    let scorePrior = 0;
-    //let scoreCurr = 0; 
-
-    const listener = new THREE.AudioListener();
-    const audioLoader = new THREE.AudioLoader();
-    const soundEffect = new THREE.Audio(listener);
-
-    if (this.g.score - scorePrior !== 0) {
-      audioLoader.load("./sound/ding.mp3", function (buffer) {
-        soundEffect.setBuffer(buffer);
-        soundEffect.setLoop(false);
-        soundEffect.setVolume(0.4);
-        soundEffect.play();
-       });
-      scorePrior = this.g.score;
-      }
-    //scoreCurr = this.g.score;
-    }
   }
+}
 
 // bloom 
 
@@ -359,7 +338,6 @@ effect2048.camera.add(listener);
 const audioLoader = new THREE.AudioLoader();
 const backgroundSound = new THREE.Audio(listener);
 
-// TODO wrap in proper promise
 audioLoader.load("./sound/background.mp3", function(buffer) {
   backgroundSound.setBuffer(buffer);
   backgroundSound.setLoop(true);
@@ -391,6 +369,10 @@ effect2048.g.spawn();
 effect2048.g.spawn();
 effect2048.animate();
 
+
+const audioLoaderDing = new THREE.AudioLoader();
+const soundEffectDing = new THREE.Audio(listener);
+
 // Game steps
 window.addEventListener("keydown", (event) => {
   let g = effect2048.g;
@@ -408,8 +390,24 @@ window.addEventListener("keydown", (event) => {
   else if ("ArrowRight" === event.key) {
     moved = g.moveRight();
   }
+  else if ("s" === event.key) {
+    effect2048.scene.remove(effect2048.ps.psMesh);
+    effect2048.ps = new Particles();
+    effect2048.scene.add(effect2048.ps.psMesh);
+  }
 
   const scored = scoreBefore - g.score !== 0;
+  if (scored) {
+    audioLoaderDing.load("./sound/ding.mp3", function (buffer) {
+      soundEffectDing.setBuffer(buffer);
+      soundEffectDing.setLoop(false);
+      soundEffectDing.setVolume(0.4);
+      soundEffectDing.play();
+    });
+    effect2048.scene.remove(effect2048.ps.psMesh);
+    effect2048.ps = new Particles();
+    effect2048.scene.add(effect2048.ps.psMesh);
+  }
   if (moved || scored) {
     g.spawn();
     // order of won and isGameOver important, can get 2048 with an unmovable board
