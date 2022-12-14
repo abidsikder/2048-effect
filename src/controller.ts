@@ -1,5 +1,5 @@
 /* Functions for manipulating grid in updates and game changes. */
-import { GRID_SIZE, Position, Tile, Cell, Grid } from './model.ts';
+import { GRID_SIZE, Position, Tile, Cell, Grid } from './model';
 
 const PROBABILITY_SPAWN_2 = 0.7;
 
@@ -34,7 +34,7 @@ class Game {
 
     // check to see if there are any possible merges that can be made for each Tile
     let possibleMerges = false;
-    Grid.forEachCell(this.grid, (x,y,c) => {
+    Grid.forEachCell(this.grid, (x:number,y:number,c:Cell) => {
       if (c === null) return;
 
       // If we already found something no need to keep running this

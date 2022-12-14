@@ -1,5 +1,3 @@
-import * as THREE from 'three'
-
 /* Grid Positioning
  * For a grid that looks like
  [ ] [ ] [ ] [ ]
@@ -19,14 +17,6 @@ import * as THREE from 'three'
  * a has coordinates (x=4,y=4)
  */
 
- /*
- [ 13] [14 ] [ 15] [16]
- [ 9] [ 10] [11 ] [12 ]
- [5 ] [ 6] [ 7] [ 8]
- [1] [ 2] [ 3] [4]
- */
-
- 
 const GRID_SIZE = 4; // number of squares on each side of the grid
 
 // Return a random integer between 1 and range, inclusive
@@ -161,4 +151,5 @@ class Grid {
   }
 }
 
+export type { Cell };
 export { GRID_SIZE, Position, Tile, Grid };

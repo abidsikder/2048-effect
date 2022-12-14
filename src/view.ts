@@ -499,7 +499,7 @@ function generate2048(DEPTH: number = 0.3/100, LENGTH: number = 1): THREE.Mesh[]
   return [textMesh2, textMesh0, textMesh4, textMesh8];
 }
 
-function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generateTitle(DEPTH: number = 0.3/100, LENGTH: number = 1) {
   const textGeo1 = new TextGeometry("2048", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/1.8,
@@ -536,7 +536,7 @@ function generateTitle(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH
   return group;
 }
 
-function generateScore(score: number, THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generateScore(score: number, DEPTH: number = 0.3/100, LENGTH: number = 1) {
   const textGeo1 = new TextGeometry("Score", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/3,
@@ -570,7 +570,7 @@ function generateScore(score: number, THICKNESS: number = 0.04, DEPTH: number = 
   return group;
 }
 
-function generateMessage(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
+function generateMessage(DEPTH: number = 0.3/100, LENGTH: number = 1) {
   const textGeo1 = new TextGeometry("Press 's' key for sparkle ", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/7,

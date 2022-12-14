@@ -7,10 +7,9 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { createNoise2D, NoiseFunction2D, createNoise4D, NoiseFunction4D } from 'simplex-noise'
 
 import { Game } from './controller'
-import { tileCoord, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
-import { Tile, Grid } from './model'
+import { tileCoord, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
+import { Grid } from './model'
 import { fragSrc, vertSrc } from './shaders'
-import { BufferGeometry } from 'three';
 
 const BOARD_LEN = 5;
 
@@ -98,6 +97,9 @@ class Effect2048 {
 
   effectComposer: EffectComposer;
 
+  boardBorder: THREE.Group;
+  score: THREE.Group;
+
   constructor() {
     this.g = new Game();
     this.time = 0;
@@ -148,9 +150,6 @@ class Effect2048 {
     // removes "this is undefined" error from animate() function
     this.animate = this.animate.bind(this)
   }
-
-  boardBorder: THREE.Group;
-  score: THREE.Mesh;
 
   generateBoardBorder(): THREE.Group {
     const THICKNESS:number = 0.04;
@@ -203,17 +202,19 @@ class Effect2048 {
   public animate() {
     requestAnimationFrame(this.animate);
 
-    const allObjects: THREE.Mesh[] = [];
-    Grid.forEachCell(this.g.grid, (x, y, c) => {
+    const tileObjects: THREE.Group[] = [];
+    // @ts-ignore unused variables
+    Grid.forEachCell(this.g.grid, (x:number, y:number, c:Cell) => {
       if (c === null) return;
 
       const tile = c;
       const tileMesh = generateNumberText(tile);
       this.scene.add(tileMesh);
 
+      // @ts-ignore
       const tileScenePos = tileCoord[tile.nowPos.x][tile.nowPos.y];
       tileMesh.position.copy(tileScenePos);
-      allObjects.push(tileMesh);
+      tileObjects.push(tileMesh);
     });
 
     this.scene.remove(this.score);
@@ -238,8 +239,8 @@ class Effect2048 {
 
     this.effectComposer.render();
 
-    for (let i = 0; i < allObjects.length; i++) {
-      const tileMesh = allObjects[i];
+    for (let i = 0; i < tileObjects.length; i++) {
+      const tileMesh = tileObjects[i];
       this.scene.remove(tileMesh);
       // @ts-ignore
       disposeOfGroup(tileMesh);
