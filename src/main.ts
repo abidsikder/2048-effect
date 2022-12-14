@@ -178,21 +178,23 @@ class Effect2048 {
 
     // add sound if score is updated
     let scorePrior = 0;
+    //let scoreCurr = 0; 
 
     const listener = new THREE.AudioListener();
     const audioLoader = new THREE.AudioLoader();
     const soundEffect = new THREE.Audio(listener);
 
-    if (this.g.score - scorePrior === 0) return;
-    audioLoader.load("./sound/ding.mp3", function (buffer) {
-       soundEffect.setBuffer(buffer);
-       soundEffect.setLoop(false);
-       soundEffect.setVolume(0.4);
-       soundEffect.play();
-      });
+    if (this.g.score - scorePrior !== 0) {
+      audioLoader.load("./sound/ding.mp3", function (buffer) {
+        soundEffect.setBuffer(buffer);
+        soundEffect.setLoop(false);
+        soundEffect.setVolume(0.4);
+        soundEffect.play();
+       });
       scorePrior = this.g.score;
+      }
+    //scoreCurr = this.g.score;
     }
-    
   }
 
 // bloom 
