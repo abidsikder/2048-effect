@@ -10,6 +10,7 @@ import { Game } from './controller'
 import { tileCoord, generateBoxTileBorder, generateNumberText, generateTitle, generateScore, generateMessage } from './view'
 import { Tile, Grid } from './model'
 import { fragSrc, vertSrc } from './shaders'
+import { BufferGeometry } from 'three';
 
 const BOARD_LEN = 5;
 
@@ -141,13 +142,17 @@ class Effect2048 {
     this.boardBorder = this.generateBoardBorder();
     this.scene.add(this.boardBorder);
 
+    this.score = generateScore(0);
+    this.scene.add(this.score);
+
     // removes "this is undefined" error from animate() function
     this.animate = this.animate.bind(this)
   }
 
-  boardBorder: THREE.Mesh;
+  boardBorder: THREE.Group;
+  score: THREE.Mesh;
 
-  generateBoardBorder(): THREE.Mesh {
+  generateBoardBorder(): THREE.Group {
     const THICKNESS:number = 0.04;
     const DEPTH: number = 0.3
     const BOARD_LENGTH: number = 5;
@@ -198,7 +203,7 @@ class Effect2048 {
   public animate() {
     requestAnimationFrame(this.animate);
 
-    const allObjects = new Array();
+    const allObjects: THREE.Mesh[] = [];
     Grid.forEachCell(this.g.grid, (x, y, c) => {
       if (c === null) return;
 
@@ -211,29 +216,48 @@ class Effect2048 {
       allObjects.push(tileMesh);
     });
 
-    const score = generateScore(this.g.score);
-    this.scene.add(score);
-    score.position.x += BOARD_LEN/3.7;
-    score.position.y += BOARD_LEN/2.1;
+    this.scene.remove(this.score);
+    disposeOfGroup(this.score);
+    this.score = generateScore(this.g.score);
+    this.scene.add(this.score);
+    this.score.position.x += BOARD_LEN/3.7;
+    this.score.position.y += BOARD_LEN/2.1;
 
     this.time += this.TIME_STEP;
 
     this.scene.remove(this.ps.psMesh);
+    this.ps.psMesh.geometry.dispose();
+    console.log(this.ps.psMesh);
     this.ps.update(this.time, this.TIME_STEP);
     this.scene.add(this.ps.psMesh)
 
     this.scene.remove(this.boardBorder);
+    disposeOfGroup(this.boardBorder);
     this.boardBorder = this.generateBoardBorder();
     this.scene.add(this.boardBorder);
 
     this.effectComposer.render();
 
     for (let i = 0; i < allObjects.length; i++) {
-      this.scene.remove(allObjects[i]); 
+      const tileMesh = allObjects[i];
+      this.scene.remove(tileMesh);
+      // @ts-ignore
+      disposeOfGroup(tileMesh);
     }
-
-    this.scene.remove(score);
   }
+}
+
+function disposeOfGroup(g: THREE.Group) {
+  g.children.map(child => {
+    if (child.type === "Group") {
+      // @ts-ignore
+      disposeOfGroup(child);
+    }
+    else if (child.type === "Mesh") {
+      // @ts-ignore
+      child.geometry.dispose();
+    }
+  })
 }
 
 const effect2048 = new Effect2048();
@@ -251,26 +275,16 @@ title.position.multiplyScalar(0);
 title.position.x -= BOARD_LEN/2;
 title.position.y += BOARD_LEN/2.1 + tileLen/2;
 
-// const pointLight = new THREE.PointLight( 0xff0000, 1, 100 );
-// pointLight.position.set( 10, 10, 10 );
-// scene.add( pointLight );
-
-// const sphereSize = 1;
-// const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
-// scene.add( pointLightHelper );
-
 // add light 
 const light = new THREE.PointLight(0x0000FF, 1);
 light.position.set(title.position.x + tileLen, title.position.y, title.position.z + tileLen);
 light.castShadow = true;
 effect2048.scene.add(light);
 
-// add light 
 const light2 = new THREE.PointLight(0xFF0000, 1);
 light2.position.set(title.position.x - tileLen, title.position.y +  tileLen, title.position.z + 1);
 light2.castShadow = true;
 effect2048.scene.add(light2);
-
 
 //adding background sound
 const listener = new THREE.AudioListener();
@@ -293,12 +307,6 @@ audioLoader.load("./sound/background.mp3", function(buffer) {
 //   });
 // });
 
-
-
-// // add score
-// const score = generateScore(0);
-// scene.add(score);
-
 // add message
 const message = generateMessage();
 effect2048.scene.add(message);
@@ -308,7 +316,6 @@ message.position.y -= BOARD_LEN/1.4;
 effect2048.g.spawn();
 effect2048.g.spawn();
 effect2048.animate();
-
 
 const audioLoaderDing = new THREE.AudioLoader();
 const soundEffectDing = new THREE.Audio(listener);
