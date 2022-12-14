@@ -146,15 +146,15 @@ class Effect2048 {
 
     const allObjects = new Array();
     Grid.forEachCell(this.g.grid, (x, y, c) => {
-      if (c !== null) {
-        const tileToAdd = generateNumberText(c);
-        this.scene.add(tileToAdd);
-        const pos = (4 * (y - 1)) + x;
-        tileToAdd.position.x = tileCoord[pos].x;
-        tileToAdd.position.y = tileCoord[pos].y;
-        tileToAdd.position.z = tileCoord[pos].z;
-        allObjects.push(tileToAdd);
-      }
+      if (c === null) return;
+
+      const tile = c;
+      const tileMesh = generateNumberText(tile);
+      this.scene.add(tileMesh);
+
+      const tileScenePos = tileCoord[tile.nowPos.x][tile.nowPos.y];
+      tileMesh.position.copy(tileScenePos);
+      allObjects.push(tileMesh);
     });
 
     const score = generateScore(this.g.score);

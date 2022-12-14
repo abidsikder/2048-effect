@@ -31,23 +31,32 @@ const colors = {
 };
 
 // coordinates of the tiles 
-const tileCoord= {
-  13: new THREE.Vector3(-2.3, 1.8, 0),
-  14: new THREE.Vector3(-1.1, 1.8, 0),
-  15: new THREE.Vector3(0.10000000000000009, 1.8, 0),
-  16: new THREE.Vector3(1.3, 1.8, 0),
-  9: new THREE.Vector3(-2.3, 0.6, 0),
-  10: new THREE.Vector3(-1.1, 0.6, 0),
-  11: new THREE.Vector3(0.10000000000000009, 0.6, 0),
-  12: new THREE.Vector3(1.3, 0.6, 0),
-  5: new THREE.Vector3(-2.3, -0.6000000000000001, 0),
-  6: new THREE.Vector3(-1.1, -0.6000000000000001, 0),
-  7: new THREE.Vector3(0.10000000000000009, -0.6000000000000001, 0),
-  8: new THREE.Vector3(1.3, -0.6000000000000001, 0),
-  1: new THREE.Vector3(-2.3, -1.8, 0),
-  2: new THREE.Vector3(-1.1, -1.8, 0),
-  3: new THREE.Vector3(0.10000000000000009, -1.8, 0),
-  4: new THREE.Vector3(1.3, -1.8, 0)
+// first coordinate is the model grid's x coordinate, then y coordinate
+const tileCoord = {
+  1: {
+    1: new THREE.Vector3(-2.3, -1.8, 0),
+    2: new THREE.Vector3(-2.3, -0.6000000000000001, 0),
+    3: new THREE.Vector3(-2.3, 0.6, 0),
+    4: new THREE.Vector3(-2.3, 1.8, 0),
+  },
+  2: {
+    1: new THREE.Vector3(-1.1, -1.8, 0),
+    2: new THREE.Vector3(-1.1, -0.6000000000000001, 0),
+    3: new THREE.Vector3(-1.1, 0.6, 0),
+    4: new THREE.Vector3(-1.1, 1.8, 0),
+  },
+  3: {
+    1: new THREE.Vector3(0.10000000000000009, -1.8, 0),
+    2: new THREE.Vector3(0.10000000000000009, -0.6000000000000001, 0),
+    3: new THREE.Vector3(0.10000000000000009, 0.6, 0),
+    4: new THREE.Vector3(0.10000000000000009, 1.8, 0),
+  },
+  4: {
+    1: new THREE.Vector3(1.3, -1.8, 0),
+    2: new THREE.Vector3(1.3, -0.6000000000000001, 0),
+    3: new THREE.Vector3(1.3, 0.6, 0),
+    4: new THREE.Vector3(1.3, 1.8, 0),
+  }
 };
 
 function generateBoxTileBorder(t:Tile, THICKNESS:number = 0.04, DEPTH: number = 0.3, LENGTH: number = 1): THREE.Mesh {
