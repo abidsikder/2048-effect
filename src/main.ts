@@ -119,7 +119,7 @@ class Effect2048 {
       // vec2 representing resolution of the scene 
       new THREE.Vector2(width, height),
       // intensity of effect
-      0.0,
+      0.4,
       // radius of bloom
       0.04,
       // pixels that exhibit bloom (found through trial and error)
@@ -140,21 +140,22 @@ class Effect2048 {
     this.animate = this.animate.bind(this)
   }
 
+
   public animate() {
     requestAnimationFrame(this.animate);
 
-    // const allObjects = new Array();
-    // Grid.forEachCell(this.g.grid, (x, y, c) => {
-    //   if (c !== null) {
-    //     const tileToAdd = generateNumberText(c);
-    //     this.scene.add(tileToAdd);
-    //     const pos = (4 * (y - 1)) + x;
-    //     tileToAdd.position.x = tileCoord[pos].x;
-    //     tileToAdd.position.y = tileCoord[pos].y;
-    //     tileToAdd.position.z = tileCoord[pos].z;
-    //     allObjects.push(tileToAdd);
-    //   }
-    // });
+    const allObjects = new Array();
+    Grid.forEachCell(this.g.grid, (x, y, c) => {
+      if (c !== null) {
+        const tileToAdd = generateNumberText(c);
+        this.scene.add(tileToAdd);
+        const pos = (4 * (y - 1)) + x;
+        tileToAdd.position.x = tileCoord[pos].x;
+        tileToAdd.position.y = tileCoord[pos].y;
+        tileToAdd.position.z = tileCoord[pos].z;
+        allObjects.push(tileToAdd);
+      }
+    });
 
     const score = generateScore(this.g.score);
     this.scene.add(score);
@@ -163,19 +164,36 @@ class Effect2048 {
 
     this.time += this.TIME_STEP;
 
-    // this.scene.remove(this.ps.psMesh);
-    // this.ps.update(this.time, this.TIME_STEP);
-    // this.scene.add(this.ps.psMesh)
+    this.scene.remove(this.ps.psMesh);
+    this.ps.update(this.time, this.TIME_STEP);
+    this.scene.add(this.ps.psMesh)
 
     this.effectComposer.render();
 
-    // for (let i = 0; i < allObjects.length; i++) {
-    //   this.scene.remove(allObjects[i]); 
-    // }
+    for (let i = 0; i < allObjects.length; i++) {
+      this.scene.remove(allObjects[i]); 
+    }
 
     this.scene.remove(score);
+
+    // add sound if score is updated
+    let scorePrior = 0;
+
+    const listener = new THREE.AudioListener();
+    const audioLoader = new THREE.AudioLoader();
+    const soundEffect = new THREE.Audio(listener);
+
+    if (this.g.score - scorePrior === 0) return;
+    audioLoader.load("./sound/ding.mp3", function (buffer) {
+       soundEffect.setBuffer(buffer);
+       soundEffect.setLoop(false);
+       soundEffect.setVolume(0.4);
+       soundEffect.play();
+      });
+      scorePrior = this.g.score;
+    }
+    
   }
-}
 
 // bloom 
 
@@ -331,6 +349,31 @@ const light2 = new THREE.PointLight(0xFF0000, 1);
 light2.position.set(title.position.x - tileLen, title.position.y +  tileLen, title.position.z + 1);
 light2.castShadow = true;
 scene.add(light2);
+
+
+//adding background sound
+const listener = new THREE.AudioListener();
+effect2048.camera.add(listener);
+const audioLoader = new THREE.AudioLoader();
+const backgroundSound = new THREE.Audio(listener);
+
+// TODO wrap in proper promise
+audioLoader.load("./sound/background.mp3", function(buffer) {
+  backgroundSound.setBuffer(buffer);
+  backgroundSound.setLoop(true);
+  backgroundSound.setVolume(0.5);
+  backgroundSound.play();
+});
+
+// // One-liner to resume playback when user interacted with the page. This is needed to 
+// // ensure that the audio plays in Chrome. Pressing any key starts background sound. 
+// document.querySelector('button').addEventListener('click', function() {
+//   context.resume().then(() => {
+//     console.log('Playback resumed successfully');
+//   });
+// });
+
+
 
 // // add score
 // const score = generateScore(0);

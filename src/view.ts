@@ -562,7 +562,7 @@ function generateScore(score: number, THICKNESS: number = 0.04, DEPTH: number = 
 }
 
 function generateMessage(THICKNESS: number = 0.04, DEPTH: number = 0.3/100, LENGTH: number = 1) {
-  const textGeo1 = new TextGeometry("Press 'n' key to start a new game ", {
+  const textGeo1 = new TextGeometry("Press 's' key for sparkle ", {
     font: TextFontShapes["SemiBold"] as Font,
     size: LENGTH/7,
     height: DEPTH/100,
