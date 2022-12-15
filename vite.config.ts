@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  // sets URLs to be relative
+  base: '',
   build: {
     target: 'esnext'
   },
